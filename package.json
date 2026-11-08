@@ -1,8 +1,8 @@
 {
-  "name": "antigravity-account-manager",
-  "displayName": "Antigravity Account Manager",
-  "description": "Local multi-account quota dashboard and experimental session switching for Antigravity IDE.",
-  "version": "0.5.8",
+  "name": "gravix",
+  "displayName": "Gravix",
+  "description": "Multi-account quota dashboard and session switching for Antigravity IDE.",
+  "version": "0.6.0",
   "publisher": "Ron-Niri",
   "license": "Apache-2.0",
   "icon": "media/icon.png",
@@ -11,12 +11,12 @@
   "extensionKind": ["ui"],
   "repository": {
     "type": "git",
-    "url": "https://github.com/Ron-Niri/AntigravityAccManager.git"
+    "url": "https://github.com/aryamanm77/gravix.git"
   },
   "bugs": {
-    "url": "https://github.com/Ron-Niri/AntigravityAccManager/issues"
+    "url": "https://github.com/aryamanm77/gravix/issues"
   },
-  "homepage": "https://github.com/Ron-Niri/AntigravityAccManager#readme",
+  "homepage": "https://github.com/aryamanm77/gravix#readme",
   "engines": {
     "vscode": "^1.107.0",
     "node": ">=20"
@@ -32,7 +32,7 @@
     "commands": [
       {
         "command": "agm.open",
-        "title": "Antigravity Accounts: Open Sidebar"
+        "title": "Gravix: Open Sidebar"
       },
       {
         "command": "agm.refresh",
@@ -54,7 +54,7 @@
       "activitybar": [
         {
           "id": "agm",
-          "title": "Antigravity Accounts",
+          "title": "Gravix",
           "icon": "media/accounts.svg"
         }
       ]
@@ -65,7 +65,7 @@
           "type": "webview",
           "id": "agm.accounts",
           "name": "Accounts",
-          "contextualTitle": "Antigravity Accounts"
+          "contextualTitle": "Gravix"
         }
       ]
     },
@@ -87,11 +87,38 @@
           "group": "navigation@3"
         }
       ]
+    },
+    "keybindings": [
+      {
+        "command": "agm.refresh",
+        "key": "ctrl+shift+r",
+        "mac": "cmd+shift+r",
+        "when": "focusedView == agm.accounts"
+      }
+    ],
+    "configuration": {
+      "title": "Gravix",
+      "properties": {
+        "gravix.monitorBatchSize": {
+          "type": "integer",
+          "default": 5,
+          "minimum": 1,
+          "maximum": 10,
+          "description": "Number of accounts to check in parallel when looking for a quota alternative (1–10)."
+        },
+        "antigravity-account-manager.monitorBatchSize": {
+          "type": "integer",
+          "default": 5,
+          "minimum": 1,
+          "maximum": 10,
+          "description": "Legacy alias: Number of accounts to check in parallel when looking for a quota alternative (1–10)."
+        }
+      }
     }
   },
   "scripts": {
     "build": "node scripts/build-icon.cjs",
-    "package": "npm run build && vsce package --no-dependencies --allow-missing-repository --no-rewrite-relative-links",
+    "package": "npm run build && npx @vscode/vsce package --no-dependencies --allow-missing-repository --no-rewrite-relative-links",
     "audit:privacy": "node scripts/audit-privacy.cjs",
     "test": "node --test test/core.test.cjs test/monitor.test.cjs",
     "check": "node --check src/extension.cjs && node --check src/core.cjs && node --check src/oauth.cjs && node --check src/ide-state.cjs && node --check src/switch.cjs && node --check src/monitor.cjs && node --check src/scan.cjs && node --check src/chrome.cjs && node --check media/panel.js && node --check media/readiness.js"

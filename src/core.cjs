@@ -1,7 +1,54 @@
 const fs = require('node:fs');
 const path = require('node:path');
 
+/**
+ * @typedef {Object} Token
+ * @property {string} accessToken
+ * @property {string} [refreshToken]
+ * @property {number} expiryDateSeconds - Unix timestamp in seconds
+ * @property {string} [tokenType]
+ * @property {boolean} [isGcpTos]
+ */
+
+/**
+ * @typedef {Object} Model
+ * @property {string} id
+ * @property {string} label
+ * @property {number|null} fraction - 0–1 quota remaining, or null if unknown
+ * @property {string|null} resetTime - ISO date string or null
+ * @property {string} checkedAt - ISO date string
+ * @property {'available'|'exhausted'|'unknown'} status
+ */
+
+/**
+ * @typedef {Object} Account
+ * @property {string} id
+ * @property {string} email
+ * @property {string} name
+ * @property {string} [tier]
+ * @property {Token} token
+ * @property {Model[]} models
+ * @property {string} [checkedAt]
+ * @property {string} [error]
+ * @property {string} [lastQuotaAttemptAt]
+ * @property {Object} [quotaCache]
+ */
+
+/**
+ * @typedef {Object} Config
+ * @property {string} clientId
+ * @property {string} clientSecret
+ * @property {string[]} scopes
+ * @property {string} version
+ * @property {string} [cloudCodeUrl]
+ */
+
 // These are implementation details of the installed IDE, not a public API.
+/**
+ * Reads OAuth config from IDE's main.js.
+ * @param {string} appRoot
+ * @returns {Config}
+ */
 function installedConfig(appRoot) {
   const source = fs.readFileSync(path.join(appRoot, 'out', 'main.js'), 'utf8');
   const block = source.match(/common\/oauthClient\.js[\s\S]{0,2400}/)?.[0];
@@ -13,6 +60,13 @@ function installedConfig(appRoot) {
   return { clientId, clientSecret, scopes: [...new Set(scopes)], version: product.ideVersion || product.version };
 }
 
+/**
+ * Performs a JSON HTTP request with timeout.
+ * @param {string} url
+ * @param {RequestInit} [options]
+ * @returns {Promise<any>}
+ * @throws {Error}
+ */
 async function jsonRequest(url, options = {}) {
   let response;
   try { response = await fetch(url, { ...options, signal: AbortSignal.timeout(20000) }); }
@@ -27,6 +81,12 @@ async function jsonRequest(url, options = {}) {
   catch { throw new Error('Service returned an invalid JSON response.'); }
 }
 
+/**
+ * Refreshes an OAuth token if it is nearing expiry.
+ * @param {Token} token
+ * @param {Config} config
+ * @returns {Promise<Token>}
+ */
 async function refreshToken(token, config) {
   if (token.accessToken && token.expiryDateSeconds * 1000 > Date.now() + 60000) return token;
   if (!token.refreshToken) throw new Error('This account needs to sign in again.');
@@ -39,6 +99,11 @@ async function refreshToken(token, config) {
     expiryDateSeconds: Math.floor(Date.now() / 1000) + result.expires_in, tokenType: result.token_type || 'Bearer' };
 }
 
+/**
+ * Fetches Google user profile info.
+ * @param {Token} token
+ * @returns {Promise<{id: string, email: string, name: string}>}
+ */
 async function profile(token) {
   const result = await jsonRequest('https://www.googleapis.com/oauth2/v2/userinfo', {
     headers: { Authorization: `Bearer ${token.accessToken}` }
@@ -47,6 +112,13 @@ async function profile(token) {
   return { id: result.id, email: result.email, name: result.name || result.email };
 }
 
+/**
+ * Normalizes model catalog response into Model array.
+ * @private
+ * @param {Object} response
+ * @param {string} [checkedAt]
+ * @returns {Model[]}
+ */
 function normalizeModels(response, checkedAt = new Date().toISOString()) {
   if (!response.models || typeof response.models !== 'object' || Array.isArray(response.models)) {
     throw new Error('Unrecognized model response. Integration needs updating.');
@@ -72,6 +144,12 @@ function normalizeModels(response, checkedAt = new Date().toISOString()) {
   }).sort((a, b) => a.label.localeCompare(b.label));
 }
 
+/**
+ * Computes model availability display status based on time and status.
+ * @param {Model} model
+ * @param {number} [now]
+ * @returns {'available'|'exhausted'|'stale'|'recheck'|'unknown'}
+ */
 function availability(model, now = Date.now()) {
   if (model.status === 'exhausted' && model.resetTime && Date.parse(model.resetTime) <= now
     && Date.parse(model.checkedAt) < Date.parse(model.resetTime)) return 'recheck';
@@ -79,6 +157,12 @@ function availability(model, now = Date.now()) {
   return model.status;
 }
 
+/**
+ * Validates and returns the origin for Cloud Code service URL.
+ * @param {Config} config
+ * @returns {string}
+ * @throws {Error}
+ */
 function cloudCodeBase(config) {
   const url = new URL(config.cloudCodeUrl || 'https://cloudcode-pa.googleapis.com');
   if (url.protocol !== 'https:' || !/^(?:[a-z0-9-]+-)?cloudcode-pa\.googleapis\.com$/.test(url.hostname)
@@ -88,6 +172,12 @@ function cloudCodeBase(config) {
   return url.origin;
 }
 
+/**
+ * Checks whether an account has any exhausted model whose reset time has passed.
+ * @param {Account} account
+ * @param {number} [now]
+ * @returns {boolean}
+ */
 function resetDue(account, now = Date.now()) {
   if (account.error && now - Date.parse(account.lastQuotaAttemptAt) < 2 * 60000) return false;
   return (account.models || []).some(model => model.status === 'exhausted' && model.resetTime
@@ -96,11 +186,27 @@ function resetDue(account, now = Date.now()) {
       || now - Date.parse(model.checkedAt) >= 5 * 60000));
 }
 
+/**
+ * Fetches quota data and paid tier information for an account.
+ * @param {Token} token
+ * @param {Config} config
+ * @param {Object} [cache]
+ * @returns {Promise<{models: Model[], tier: string}>}
+ */
 async function quotas(token, config, cache) {
   const { catalog, info } = await accountData(token, config, false, cache);
   return { models: normalizeModels(catalog), tier: info.paidTier?.name || info.currentTier?.name || info.paidTier?.id || info.currentTier?.id || 'Unknown plan' };
 }
 
+/**
+ * Internal loader for account models, tier, and user settings.
+ * @private
+ * @param {Token} token
+ * @param {Config} config
+ * @param {boolean} [includeSettings=false]
+ * @param {Object} [cache]
+ * @returns {Promise<{catalog: Object, info: Object, settings: Object}>}
+ */
 async function accountData(token, config, includeSettings = false, cache) {
   if (token.isGcpTos) throw new Error('Only personal Google accounts are supported.');
   const base = cloudCodeBase(config);

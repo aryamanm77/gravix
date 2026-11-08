@@ -81,3 +81,40 @@ test('losing focus while approval is pending cancels the switch', async () => {
   h.d.ask = async () => { focused = false; return 'switch'; };
   await h.monitor.tick(); assert.equal(h.switches.length, 0);
 });
+test('repeated lack of candidates applies exponential backoff up to 30 minutes', async () => {
+  const h = harness(); h.accounts.forEach(a => { a.models[0].fraction = 0; });
+  // Step 0: 5 minutes
+  await h.monitor.tick();
+  assert.equal(h.statuses.at(-1), 'No other account has confirmed quota. Checking again in 5 min.');
+  h.advance(4 * 60000);
+  await h.monitor.tick();
+  // Still in cooldown
+  assert.equal(h.statuses.at(-1), 'No other account has confirmed quota. Checking again in 5 min.');
+  // Advance past 5 min -> Step 1: 10 minutes
+  h.advance(1 * 60000 + 1);
+  await h.monitor.tick();
+  assert.equal(h.statuses.at(-1), 'No other account has confirmed quota. Checking again in 10 min.');
+  // Advance past 10 min -> Step 2: 20 minutes
+  h.advance(10 * 60000 + 1);
+  await h.monitor.tick();
+  assert.equal(h.statuses.at(-1), 'No other account has confirmed quota. Checking again in 20 min.');
+  // Advance past 20 min -> Step 3: capped at 30 minutes
+  h.advance(20 * 60000 + 1);
+  await h.monitor.tick();
+  assert.equal(h.statuses.at(-1), 'No other account has confirmed quota. Checking again in 30 min.');
+});
+test('batchSize callback configures how many alternatives are checked per batch', async () => {
+  const h = harness();
+  // Create 5 accounts: active 'a' (exhausted), and 'b', 'c', 'd', 'e' (all exhausted)
+  h.accounts.push(
+    { id: 'd', email: 'd@example.com', models: [{ id: 'claude', fraction: 0 }] },
+    { id: 'e', email: 'e@example.com', models: [{ id: 'claude', fraction: 0 }] }
+  );
+  h.accounts.forEach(a => { a.models[0].fraction = 0; });
+  const batches = [];
+  h.d.checkMany = async batch => batches.push(batch.map(a => a.id));
+  h.d.batchSize = () => 2;
+  await h.monitor.tick();
+  // With batchSize 2, 4 alternatives ['b', 'c', 'd', 'e'] should be processed in batches of 2: ['b', 'c'] and ['d', 'e']
+  assert.deepEqual(batches, [['b', 'c'], ['d', 'e']]);
+});

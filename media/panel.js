@@ -127,52 +127,81 @@ function render() {
   el('accounts').replaceChildren();
   const query = el('model').value.toLowerCase().trim();
   let visible = 0;
+
+  // Group accounts by tier for display
+  const tierOrder = (tier) => {
+    if (!tier || tier === 'Unknown plan') return 2;
+    const t = tier.toLowerCase();
+    if (t.includes('pro') || t.includes('paid') || t.includes('premium')) return 0;
+    return 1; // free / other named tiers
+  };
+  const tierGroups = new Map();
   for (const a of state.accounts) {
-    const accountMatch = `${a.email} ${a.name}`.toLowerCase().includes(query);
-    const models = a.models.filter(m => AccountReadiness.visibleForSelection(a, m, selected) && (accountMatch || `${m.label} ${m.id}`.toLowerCase().includes(query)) && (!el('available').checked || AccountReadiness.modelState(a, m) === 'available'));
-    if (selected && !models.length) continue;
-    if (!models.length && (query || el('available').checked) && !(accountMatch && !el('available').checked)) continue;
-    visible++;
-    const card = node('details', undefined, 'account'); card.open = query ? true : preferences.collapsed[a.id] === false;
-    card.addEventListener('toggle', () => { if (!card.isConnected || query) return; preferences.collapsed[a.id] = !card.open; api.setState(preferences); });
-    const heading = node('summary');
-    const identity = node('div', undefined, 'identity'), email = node('div', a.email, 'email'); email.title = a.email;
-    const meta = node('div', undefined, 'meta');
-    meta.append(node('span', a.tier || 'Plan unknown'));
-    if (state.activeId === a.id) meta.append(node('span', 'Active', 'badge'));
-    if (a.checkedAt) { const checked = node('span', `· ${new Date(a.checkedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`); checked.title = `Last checked ${new Date(a.checkedAt).toLocaleString()}`; meta.append(checked); }
-    identity.append(email, meta);
-    const summary = AccountReadiness.summarize(a);
-    const badge = node('span', summary.label, summary.ready ? 'available-count' : 'subtle');
-    badge.title = summary.detail;
-    heading.append(chevron(), node('span', (a.name || a.email).slice(0, 2).toUpperCase(), 'avatar'), identity, badge);
-    card.append(heading);
-    const actions = node('div', undefined, 'account-actions'), remove = button('Remove', 'remove', a.id); remove.className = 'remove';
-    const switchButton = button(state.activeId === a.id ? 'Active account' : 'Switch account', 'switch', a.id);
-    switchButton.disabled = state.busy || state.activeId === a.id;
-    actions.append(switchButton, button('Refresh', 'refresh', a.id), remove); card.append(actions);
-    if (a.error) card.append(node('p', a.error, 'error'));
-    if (models.length) {
-      const list = node('div', undefined, 'models');
-      for (const m of models) {
-        const status = AccountReadiness.modelState(a, m);
-        const row = node('div', undefined, `model-row ${status}`), top = node('div', undefined, 'model-title');
-        const label = node('span', m.label, 'model-label'); label.title = m.id;
-        const percent = node('span', m.fraction === null ? '—' : `${Math.round(m.fraction * 100)}%${status === 'stale' ? ' cached' : ''}`, 'percent');
-        if (status === 'stale') percent.title = 'Last known quota; refresh to confirm availability.';
-        top.append(providerIcon(m.id), label, percent);
-        const bottom = node('div', undefined, 'model-meta');
-        const names = { available: 'Available', exhausted: 'Exhausted', stale: 'Stale', recheck: 'Recheck', unknown: 'Unknown' };
-        const reset = node('span', m.fraction === 1 ? (status === 'stale' ? 'Full at last check' : 'Quota reported full') : resetLabel(m.resetTime, status), 'reset');
-        if (m.resetTime && m.fraction !== 1) reset.title = new Date(m.resetTime).toLocaleString();
-        bottom.append(node('span', names[status] || 'Unknown', `status ${status}`), reset);
-        row.append(top, bottom);
-        if (m.fraction !== null) { const p = node('progress'); p.max = 1; p.value = m.fraction; p.setAttribute('aria-label', `${m.label}: ${Math.round(m.fraction * 100)}% remaining`); row.append(p); }
-        list.append(row);
-      }
-      card.append(list);
-    } else card.append(node('div', 'No quota data. Refresh this account to check.', 'no-models'));
-    el('accounts').append(card);
+    const tierKey = a.tier || 'Unknown plan';
+    if (!tierGroups.has(tierKey)) tierGroups.set(tierKey, []);
+    tierGroups.get(tierKey).push(a);
+  }
+  const sortedTiers = [...tierGroups.keys()].sort((a, b) => tierOrder(a) - tierOrder(b) || a.localeCompare(b));
+
+  for (const tier of sortedTiers) {
+    const tierAccounts = tierGroups.get(tier);
+    const tierSection = node('div', undefined, 'tier-group');
+    const tierHeader = node('div', tier, 'tier-header');
+    tierSection.append(tierHeader);
+    let tierVisible = 0;
+
+    for (const a of tierAccounts) {
+      const accountMatch = `${a.email} ${a.name}`.toLowerCase().includes(query);
+      const models = a.models.filter(m => AccountReadiness.visibleForSelection(a, m, selected) && (accountMatch || `${m.label} ${m.id}`.toLowerCase().includes(query)) && (!el('available').checked || AccountReadiness.modelState(a, m) === 'available'));
+      if (selected && !models.length) continue;
+      if (!models.length && (query || el('available').checked) && !(accountMatch && !el('available').checked)) continue;
+      visible++; tierVisible++;
+      const card = node('details', undefined, 'account'); card.open = query ? true : preferences.collapsed[a.id] === false;
+      card.addEventListener('toggle', () => { if (!card.isConnected || query) return; preferences.collapsed[a.id] = !card.open; api.setState(preferences); });
+      const heading = node('summary');
+      const identity = node('div', undefined, 'identity'), email = node('div', a.email, 'email'); email.title = a.email;
+      const meta = node('div', undefined, 'meta');
+      meta.append(node('span', a.tier || 'Plan unknown'));
+      if (state.activeId === a.id) meta.append(node('span', 'Active', 'badge'));
+      if (a.checkedAt) { const checked = node('span', `· ${new Date(a.checkedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`); checked.title = `Last checked ${new Date(a.checkedAt).toLocaleString()}`; meta.append(checked); }
+      identity.append(email, meta);
+      const summary = AccountReadiness.summarize(a);
+      const badge = node('span', summary.label, summary.ready ? 'available-count' : 'subtle');
+      badge.title = summary.detail;
+      const avatarInitials = (a.name || a.email).slice(0, 2).toUpperCase();
+      const avatarEl = node('span', avatarInitials, 'avatar');
+      avatarEl.title = a.name || a.email;
+      heading.append(chevron(), avatarEl, identity, badge);
+      card.append(heading);
+      const actions = node('div', undefined, 'account-actions'), remove = button('Remove', 'remove', a.id); remove.className = 'remove';
+      const switchButton = button(state.activeId === a.id ? 'Active account' : 'Switch account', 'switch', a.id);
+      switchButton.disabled = state.busy || state.activeId === a.id;
+      actions.append(switchButton, button('Refresh', 'refresh', a.id), remove); card.append(actions);
+      if (a.error) card.append(node('p', a.error, 'error'));
+      if (models.length) {
+        const list = node('div', undefined, 'models');
+        for (const m of models) {
+          const status = AccountReadiness.modelState(a, m);
+          const row = node('div', undefined, `model-row ${status}`), top = node('div', undefined, 'model-title');
+          const label = node('span', m.label, 'model-label'); label.title = m.id;
+          const percent = node('span', m.fraction === null ? '—' : `${Math.round(m.fraction * 100)}%${status === 'stale' ? ' cached' : ''}`, 'percent');
+          if (status === 'stale') percent.title = 'Last known quota; refresh to confirm availability.';
+          top.append(providerIcon(m.id), label, percent);
+          const bottom = node('div', undefined, 'model-meta');
+          const names = { available: 'Available', exhausted: 'Exhausted', stale: 'Stale', recheck: 'Recheck', unknown: 'Unknown' };
+          const reset = node('span', m.fraction === 1 ? (status === 'stale' ? 'Full at last check' : 'Quota reported full') : resetLabel(m.resetTime, status), 'reset');
+          if (m.resetTime && m.fraction !== 1) reset.title = new Date(m.resetTime).toLocaleString();
+          bottom.append(node('span', names[status] || 'Unknown', `status ${status}`), reset);
+          row.append(top, bottom);
+          if (m.fraction !== null) { const p = node('progress'); p.max = 1; p.value = m.fraction; p.setAttribute('aria-label', `${m.label}: ${Math.round(m.fraction * 100)}% remaining`); row.append(p); }
+          list.append(row);
+        }
+        card.append(list);
+      } else card.append(node('div', 'No quota data. Refresh this account to check.', 'no-models'));
+      tierSection.append(card);
+    }
+
+    if (tierVisible > 0) el('accounts').append(tierSection);
   }
   el('no-results').hidden = !state.accounts.length || visible > 0;
 }

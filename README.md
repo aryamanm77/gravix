@@ -1,4 +1,4 @@
-# Antigravity Account Manager
+# Gravix
 
 **Find an account with quota. Switch without another sign-in.**
 
@@ -98,7 +98,7 @@ Copyright 2026 Antigravity Account Manager contributors. Licensed under the [Apa
 
 ## Troubleshooting
 
-**The sidebar icon is missing:** run **Developer: Reload Window**, then **Antigravity Accounts: Open Sidebar** from the command palette.
+**The sidebar icon is missing:** run **Developer: Reload Window**, then **Gravix: Open Sidebar** from the command palette.
 
 **The monitor finds exhaustion but no notification appears:** open the sidebar; pending offers remain there. Make sure monitoring is enabled for the intended model and that the active account is saved. Monitoring runs in the focused IDE window.
 

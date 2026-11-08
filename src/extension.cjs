@@ -190,7 +190,7 @@ function activate(context) {
           notice = `Restored ${target.identity.email}. Account profile and IDE session verified.`; break;
         }
         case 'github':
-          void vscode.env.openExternal(vscode.Uri.parse('https://github.com/Ron-Niri/AntigravityAccManager'));
+          void vscode.env.openExternal(vscode.Uri.parse('https://github.com/aryamanm77/gravix'));
           break;
         case 'remove':
           if (account && await vscode.window.showWarningMessage(`Remove ${account.email} from this manager?`, { modal: true }, 'Remove') === 'Remove') {
@@ -204,6 +204,7 @@ function activate(context) {
     config: () => monitorConfig, accounts: () => accounts, activeAccount,
     isBusy: () => busy,
     isFocused: () => vscode.window.state.focused,
+    batchSize: () => vscode.workspace.getConfiguration('gravix').get('monitorBatchSize') ?? vscode.workspace.getConfiguration('antigravity-account-manager').get('monitorBatchSize', 5),
     check: async a => { if (busy) throw new Error('Another account operation is running.'); busy = true; try { await check(a); } finally { busy = false; await render(); } },
     checkMany: async list => { if (busy) throw new Error('Another account operation is running.'); busy = true; try { await checkMany(list); } finally { busy = false; await render(); } },
     status: text => { monitorStatus = text; void render(); },
@@ -247,7 +248,7 @@ function activate(context) {
   context.subscriptions.push(vscode.commands.registerCommand('agm.refresh', () => action({ type: 'refresh' })));
   context.subscriptions.push(vscode.commands.registerCommand('agm.connect', () => action({ type: 'login' })));
   context.subscriptions.push(vscode.commands.registerCommand('agm.openGithub', () => {
-    void vscode.env.openExternal(vscode.Uri.parse('https://github.com/Ron-Niri/AntigravityAccManager'));
+    void vscode.env.openExternal(vscode.Uri.parse('https://github.com/aryamanm77/gravix'));
   }));
   context.subscriptions.push(vscode.window.registerWebviewViewProvider('agm.accounts', { resolveWebviewView(view) {
     panel = view;

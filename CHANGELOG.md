@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.6.0
+
+- Rebrand extension as **Gravix** with new logo and visual identity.
+- Group account cards by subscription tier (Pro, Free, Other) with clean section headers.
+- Add exponential backoff (5m → 10m → 20m → 30m) when monitoring exhausted accounts.
+- Make quota monitor batch size configurable via `gravix.monitorBatchSize`.
+- Add `Ctrl+Shift+R` (`Cmd+Shift+R` on macOS) keyboard shortcut to refresh accounts.
+- Enhance UI with pulsing status dots for exhausted models and quota progress gradients.
+
 ## 0.5.8
 
 - Account for every connected account in the selected-model summary, including expired readings, failed checks, and accounts without that model.

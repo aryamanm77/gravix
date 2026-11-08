@@ -1,6 +1,15 @@
 const core = require('./core.cjs');
 const { userStatusJson, pushStatus } = require('./ide-state.cjs');
 
+/**
+ * Prepares the target account session by refreshing token, verifying identity, and encoding profile.
+ * @param {import('./core.cjs').Token} token
+ * @param {import('./core.cjs').Config} config
+ * @param {Object} codec
+ * @param {string} [expectedId]
+ * @returns {Promise<{token: import('./core.cjs').Token, status: string, identity: {id: string, email: string, name: string}}>}
+ * @throws {Error}
+ */
 async function prepare(token, config, codec, expectedId) {
   const refreshed = await core.refreshToken(token, config);
   const identity = await core.profile(refreshed);
@@ -11,6 +20,12 @@ async function prepare(token, config, codec, expectedId) {
   return { token: refreshed, status, identity };
 }
 
+/**
+ * Captures current IDE session token and status for rollback.
+ * @param {Object} api
+ * @returns {Promise<{token: import('./core.cjs').Token, status: string}>}
+ * @throws {Error}
+ */
 async function capture(api) {
   const token = await api.OAuthPreferences.getOAuthTokenInfo();
   const status = await api.UserStatus.getUserStatus();
@@ -18,6 +33,17 @@ async function capture(api) {
   return { token, status };
 }
 
+/**
+ * Applies a target session to the IDE and restarts the language server.
+ * @param {Object} params
+ * @param {Object} params.api
+ * @param {Object} params.commands
+ * @param {Object} params.codec
+ * @param {Object} params.target
+ * @param {Function} [params.sleep]
+ * @returns {Promise<void>}
+ * @throws {Error}
+ */
 async function applySession({ api, commands, codec, target, sleep = ms => new Promise(r => setTimeout(r, ms)) }) {
   await api.OAuthPreferences.setOAuthTokenInfo(target.token);
   // The auth provider builds its session from both token AND UserStatus. Do not
@@ -39,6 +65,18 @@ async function applySession({ api, commands, codec, target, sleep = ms => new Pr
   }
 }
 
+/**
+ * Switches the IDE session with rollback protection if the switch fails.
+ * @param {Object} params
+ * @param {Object} params.api
+ * @param {Object} params.commands
+ * @param {Object} params.codec
+ * @param {Object} params.target
+ * @param {Function} params.saveRollback
+ * @param {Function} [params.sleep]
+ * @returns {Promise<void>}
+ * @throws {Error}
+ */
 async function switchSession({ api, commands, codec, target, saveRollback, sleep }) {
   const previous = await capture(api);
   await saveRollback(previous);
