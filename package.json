@@ -3,7 +3,7 @@
   "displayName": "Gravix",
   "description": "Multi-account quota dashboard and session switching for Antigravity IDE.",
   "version": "0.6.0",
-  "publisher": "aryamanm77",
+  "publisher": "Aryaman-M",
   "license": "Apache-2.0",
   "icon": "media/icon.png",
   "categories": ["Other"],
@@ -55,7 +55,7 @@
         {
           "id": "gravix",
           "title": "Gravix",
-          "icon": "media/accounts.svg"
+          "icon": "media/gravix-activitybar.svg"
         }
       ]
     },
