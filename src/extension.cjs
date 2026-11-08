@@ -9,8 +9,12 @@ const switching = require('./switch.cjs');
 const { QuotaMonitor } = require('./monitor.cjs');
 const { scanAccounts } = require('./scan.cjs');
 const chrome = require('./chrome.cjs');
-const ACCOUNT_KEY = 'agm.accounts.v1';
-const ROLLBACK_KEY = 'agm.rollback.v1';
+const ACCOUNT_KEY = 'gravix.accounts.v1';
+const LEGACY_ACCOUNT_KEY = 'agm.accounts.v1';
+const ROLLBACK_KEY = 'gravix.rollback.v1';
+const LEGACY_ROLLBACK_KEY = 'agm.rollback.v1';
+const MONITOR_KEY = 'gravix.monitor.v1';
+const LEGACY_MONITOR_KEY = 'agm.monitor.v1';
 
 function activate(context) {
   let panel, busy = false, notice = '', accounts = [], activeId = null;
@@ -18,13 +22,13 @@ function activate(context) {
   let pendingOffer = null;
   let resolveOffer;
   function finishOffer(answer) { const resolve = resolveOffer; resolveOffer = null; pendingOffer = null; resolve?.(answer); void render(); }
-  let monitorConfig = { enabled: false, modelId: '', revision: 0, ...context.globalState.get('agm.monitor.v1', {}) };
+  let monitorConfig = { enabled: false, modelId: '', revision: 0, ...context.globalState.get(MONITOR_KEY, context.globalState.get(LEGACY_MONITOR_KEY, {})) };
   let monitorStatus = monitorConfig.enabled ? 'Waiting for the first quota check…' : 'Select a model to enable monitoring.';
   let codec;
   const getCodec = () => codec ||= loadCodec(vscode.env.appRoot);
   const api = vscode.antigravityUnifiedStateSync;
   const ready = (async () => {
-    const saved = await context.secrets.get(ACCOUNT_KEY);
+    const saved = (await context.secrets.get(ACCOUNT_KEY)) || (await context.secrets.get(LEGACY_ACCOUNT_KEY));
     if (saved) accounts = JSON.parse(saved);
     config = core.installedConfig(vscode.env.appRoot);
     if (typeof vscode.getCloudCodeUrl === 'function') config.cloudCodeUrl = await vscode.getCloudCodeUrl();
@@ -107,7 +111,7 @@ function activate(context) {
       if (message.enabled && !accounts.some(a => a.models.some(m => m.id === modelId))) return;
       monitorConfig = { enabled: !!message.enabled, modelId, revision: monitorConfig.revision + 1 };
       finishOffer('cancelled');
-      await context.globalState.update('agm.monitor.v1', monitorConfig);
+      await context.globalState.update(MONITOR_KEY, monitorConfig);
       monitorStatus = monitorConfig.enabled ? 'Waiting for the first quota check…' : 'Monitoring off.';
       if (!monitorConfig.enabled && !monitor.running) monitor.releaseLease();
       await render();
@@ -178,7 +182,7 @@ function activate(context) {
           notice = 'Quota check finished.'; break;
         case 'switch': if (account) await switchAccount(account); break;
         case 'restore': {
-          const saved = await context.secrets.get(ROLLBACK_KEY);
+          const saved = (await context.secrets.get(ROLLBACK_KEY)) || (await context.secrets.get(LEGACY_ROLLBACK_KEY));
           if (!saved) throw new Error('No previous session has been saved.');
           const choice = await vscode.window.showWarningMessage('Restore the previous IDE account and restart its language server? Stop running agent tasks first.', { modal: true }, 'Restore');
           if (choice !== 'Restore') break;
@@ -244,13 +248,13 @@ function activate(context) {
     else void ready.then(() => monitor.tick()).catch(() => {});
   }));
   context.subscriptions.push({ dispose: () => { monitorConfig = { ...monitorConfig, enabled: false }; finishOffer('cancelled'); monitor.releaseLease(); clearInterval(monitorTimer); clearInterval(renewalTimer); } });
-  context.subscriptions.push(vscode.commands.registerCommand('agm.open', () => vscode.commands.executeCommand('agm.accounts.focus')));
-  context.subscriptions.push(vscode.commands.registerCommand('agm.refresh', () => action({ type: 'refresh' })));
-  context.subscriptions.push(vscode.commands.registerCommand('agm.connect', () => action({ type: 'login' })));
-  context.subscriptions.push(vscode.commands.registerCommand('agm.openGithub', () => {
+  context.subscriptions.push(vscode.commands.registerCommand('gravix.open', () => vscode.commands.executeCommand('gravix.accounts.focus')));
+  context.subscriptions.push(vscode.commands.registerCommand('gravix.refresh', () => action({ type: 'refresh' })));
+  context.subscriptions.push(vscode.commands.registerCommand('gravix.connect', () => action({ type: 'login' })));
+  context.subscriptions.push(vscode.commands.registerCommand('gravix.openGithub', () => {
     void vscode.env.openExternal(vscode.Uri.parse('https://github.com/aryamanm77/gravix'));
   }));
-  context.subscriptions.push(vscode.window.registerWebviewViewProvider('agm.accounts', { resolveWebviewView(view) {
+  context.subscriptions.push(vscode.window.registerWebviewViewProvider('gravix.accounts', { resolveWebviewView(view) {
     panel = view;
     view.webview.options = { enableScripts: true, localResourceRoots: [vscode.Uri.joinPath(context.extensionUri, 'media')] };
     const nonce = crypto.randomBytes(24).toString('base64');
@@ -281,7 +285,7 @@ function activate(context) {
           fs.unlinkSync(scanRequest);
           await require('../test/scan-live.cjs').run(context, vscode);
         }
-        await vscode.commands.executeCommand('agm.open');
+        await vscode.commands.executeCommand('gravix.open');
       } catch { /* Development diagnostics write their own credential-free report. */ }
     }, 1000);
     context.subscriptions.push({ dispose: () => clearTimeout(startup) });

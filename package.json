@@ -3,7 +3,7 @@
   "displayName": "Gravix",
   "description": "Multi-account quota dashboard and session switching for Antigravity IDE.",
   "version": "0.6.0",
-  "publisher": "Ron-Niri",
+  "publisher": "aryamanm77",
   "license": "Apache-2.0",
   "icon": "media/icon.png",
   "categories": ["Other"],
@@ -23,29 +23,29 @@
   },
   "main": "./src/extension.cjs",
   "activationEvents": [
-    "onCommand:agm.open",
-    "onCommand:agm.openGithub",
-    "onView:agm.accounts",
+    "onCommand:gravix.open",
+    "onCommand:gravix.openGithub",
+    "onView:gravix.accounts",
     "onStartupFinished"
   ],
   "contributes": {
     "commands": [
       {
-        "command": "agm.open",
+        "command": "gravix.open",
         "title": "Gravix: Open Sidebar"
       },
       {
-        "command": "agm.refresh",
+        "command": "gravix.refresh",
         "title": "Refresh Accounts",
         "icon": "$(refresh)"
       },
       {
-        "command": "agm.connect",
+        "command": "gravix.connect",
         "title": "Connect Google Account",
         "icon": "$(add)"
       },
       {
-        "command": "agm.openGithub",
+        "command": "gravix.openGithub",
         "title": "Open GitHub Repository",
         "icon": "$(github)"
       }
@@ -53,17 +53,17 @@
     "viewsContainers": {
       "activitybar": [
         {
-          "id": "agm",
+          "id": "gravix",
           "title": "Gravix",
           "icon": "media/accounts.svg"
         }
       ]
     },
     "views": {
-      "agm": [
+      "gravix": [
         {
           "type": "webview",
-          "id": "agm.accounts",
+          "id": "gravix.accounts",
           "name": "Accounts",
           "contextualTitle": "Gravix"
         }
@@ -72,28 +72,28 @@
     "menus": {
       "view/title": [
         {
-          "command": "agm.refresh",
-          "when": "view == agm.accounts",
+          "command": "gravix.refresh",
+          "when": "view == gravix.accounts",
           "group": "navigation@1"
         },
         {
-          "command": "agm.connect",
-          "when": "view == agm.accounts",
+          "command": "gravix.connect",
+          "when": "view == gravix.accounts",
           "group": "navigation@2"
         },
         {
-          "command": "agm.openGithub",
-          "when": "view == agm.accounts",
+          "command": "gravix.openGithub",
+          "when": "view == gravix.accounts",
           "group": "navigation@3"
         }
       ]
     },
     "keybindings": [
       {
-        "command": "agm.refresh",
+        "command": "gravix.refresh",
         "key": "ctrl+shift+r",
         "mac": "cmd+shift+r",
-        "when": "focusedView == agm.accounts"
+        "when": "focusedView == gravix.accounts"
       }
     ],
     "configuration": {

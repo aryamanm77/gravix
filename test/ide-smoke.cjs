@@ -21,7 +21,7 @@ async function run() {
       report.modelsWithReset = result.models.filter(m => m.resetTime).length;
       report.models = result.models;
     }
-    const extension = vscode.extensions.getExtension('local-tools.antigravity-account-manager');
+    const extension = vscode.extensions.getExtension('aryamanm77.gravix') || vscode.extensions.getExtension('local-tools.gravix') || vscode.extensions.getExtension('local-tools.antigravity-account-manager');
     await extension?.activate();
     report.extensionActivated = !!extension?.isActive;
   } catch (error) { report.error = error.message; }
