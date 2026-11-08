@@ -262,6 +262,7 @@ function activate(context) {
     html = html.replaceAll('{{csp}}', panel.webview.cspSource).replaceAll('{{nonce}}', nonce)
       .replace('{{css}}', panel.webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, 'media', 'panel.css')).toString())
       .replace('{{readiness}}', panel.webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, 'media', 'readiness.js')).toString())
+      .replace('{{logo}}', panel.webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, 'media', 'gravix-logo.png')).toString())
       .replace('{{js}}', panel.webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, 'media', 'panel.js')).toString());
     panel.webview.html = html;
     panel.webview.onDidReceiveMessage(action, null, context.subscriptions);
