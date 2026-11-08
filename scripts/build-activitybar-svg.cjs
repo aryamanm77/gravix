@@ -120,3 +120,4 @@ const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" view
 
 fs.writeFileSync('media/gravix-activitybar.svg', svg);
 console.log('Successfully generated media/gravix-activitybar.svg with', loops.length, 'loops');
+
