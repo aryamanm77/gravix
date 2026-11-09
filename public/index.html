@@ -206,11 +206,85 @@
       cursor: pointer;
     }
 
+    /* Ambient Cosmic Aura Background Orbs */
+    .cosmic-aura-wrap {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 1200px;
+      height: 720px;
+      overflow: hidden;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .aura-orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(85px);
+      opacity: 0.42;
+      will-change: transform;
+    }
+    .aura-1 {
+      width: 480px;
+      height: 480px;
+      background: radial-gradient(circle, rgba(157, 78, 221, 0.45) 0%, rgba(216, 58, 125, 0.22) 50%, transparent 70%);
+      top: -80px;
+      left: 15%;
+      animation: floatAura1 16s ease-in-out infinite alternate;
+    }
+    .aura-2 {
+      width: 420px;
+      height: 420px;
+      background: radial-gradient(circle, rgba(255, 107, 53, 0.35) 0%, rgba(216, 58, 125, 0.18) 50%, transparent 70%);
+      top: 120px;
+      right: 12%;
+      animation: floatAura2 20s ease-in-out infinite alternate;
+    }
+    .aura-3 {
+      width: 320px;
+      height: 320px;
+      background: radial-gradient(circle, rgba(0, 245, 212, 0.22) 0%, transparent 70%);
+      top: 260px;
+      left: 8%;
+      animation: floatAura3 14s ease-in-out infinite alternate;
+    }
+
+    @keyframes floatAura1 {
+      0% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(45px, -35px) scale(1.1); }
+      100% { transform: translate(-30px, 25px) scale(0.95); }
+    }
+    @keyframes floatAura2 {
+      0% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(-45px, 35px) scale(1.12); }
+      100% { transform: translate(25px, -20px) scale(0.92); }
+    }
+    @keyframes floatAura3 {
+      0% { transform: translate(0, 0) scale(0.9); }
+      100% { transform: translate(50px, -40px) scale(1.15); }
+    }
+
+    /* Hero Load Entrance Animations */
+    .anim-hero-badge { animation: heroSlideUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    .anim-hero-title { animation: heroSlideUp 0.85s cubic-bezier(0.16, 1, 0.3, 1) 0.08s both; }
+    .anim-hero-sub   { animation: heroSlideUp 0.85s cubic-bezier(0.16, 1, 0.3, 1) 0.16s both; }
+    .anim-hero-cta   { animation: heroSlideUp 0.85s cubic-bezier(0.16, 1, 0.3, 1) 0.24s both; }
+    .anim-hero-os    { animation: heroSlideUp 0.85s cubic-bezier(0.16, 1, 0.3, 1) 0.32s both; }
+    .anim-hero-cmd   { animation: heroSlideUp 0.85s cubic-bezier(0.16, 1, 0.3, 1) 0.40s both; }
+
+    @keyframes heroSlideUp {
+      0% { opacity: 0; transform: translateY(22px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
     /* Hero Section */
     .hero {
       padding: clamp(48px, 10vw, 84px) 0 clamp(40px, 8vw, 64px);
       text-align: center;
       position: relative;
+      z-index: 1;
     }
     .pill-badge {
       display: inline-flex;
@@ -290,13 +364,32 @@
       gap: 9px;
       box-shadow: 0 4px 24px rgba(216, 58, 125, 0.42), inset 0 1px 0 rgba(255, 255, 255, 0.25);
       border: 1px solid rgba(255, 107, 53, 0.5);
-      transition: all 0.2s;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
       cursor: pointer;
       min-height: 48px;
+      position: relative;
+      overflow: hidden;
+    }
+    .btn-primary::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -60%;
+      width: 40%;
+      height: 200%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+      transform: rotate(25deg);
+      animation: btnShimmer 5s ease-in-out infinite;
+      pointer-events: none;
+    }
+    @keyframes btnShimmer {
+      0%, 75% { left: -60%; opacity: 0; }
+      80% { opacity: 1; }
+      100% { left: 140%; opacity: 0; }
     }
     .btn-primary:hover {
       transform: translateY(-2px);
-      box-shadow: 0 6px 30px rgba(216, 58, 125, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+      box-shadow: 0 8px 32px rgba(216, 58, 125, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.35);
     }
     .btn-secondary {
       padding: 13px 22px;
@@ -312,13 +405,14 @@
       justify-content: center;
       gap: 8px;
       backdrop-filter: blur(10px);
-      transition: all 0.2s;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
       min-height: 48px;
     }
     .btn-secondary:hover {
       background: var(--surface-hover);
       border-color: rgba(157, 78, 221, 0.45);
       transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
     }
 
     /* OS Platform Selector */
@@ -400,6 +494,11 @@
     .command-text {
       white-space: nowrap;
       text-align: left;
+      transition: opacity 0.22s cubic-bezier(0.16, 1, 0.3, 1), transform 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .command-text.cmd-swap {
+      opacity: 0;
+      transform: translateY(-4px);
     }
     .copy-btn {
       background: rgba(157, 78, 221, 0.15);
@@ -413,13 +512,14 @@
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      transition: all 0.15s;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
       flex-shrink: 0;
       min-height: 32px;
     }
     .copy-btn:hover {
-      background: rgba(157, 78, 221, 0.3);
+      background: rgba(157, 78, 221, 0.35);
       color: #fff;
+      transform: translateY(-1px);
     }
 
     /* Product Preview Showcase */
@@ -431,6 +531,23 @@
       border-radius: 16px;
       padding: 6px;
       box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6), 0 0 40px rgba(157, 78, 221, 0.15);
+      animation: showcaseFloat 8s ease-in-out infinite;
+      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s;
+    }
+    .preview-showcase:hover {
+      animation-play-state: paused;
+      transform: translateY(-4px);
+      box-shadow: 0 28px 75px rgba(0, 0, 0, 0.7), 0 0 55px rgba(157, 78, 221, 0.28);
+    }
+    @keyframes showcaseFloat {
+      0%, 100% {
+        transform: translateY(0);
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6), 0 0 40px rgba(157, 78, 221, 0.15);
+      }
+      50% {
+        transform: translateY(-8px);
+        box-shadow: 0 28px 75px rgba(0, 0, 0, 0.7), 0 0 55px rgba(157, 78, 221, 0.28);
+      }
     }
     .window-header {
       display: flex;
@@ -539,6 +656,12 @@
       border-radius: 20px;
       background: var(--gradient-brand);
       position: relative;
+      box-shadow: 0 0 10px rgba(255, 107, 53, 0.45);
+      animation: switchGlow 3s infinite alternate;
+    }
+    @keyframes switchGlow {
+      0% { box-shadow: 0 0 6px rgba(255, 107, 53, 0.3); }
+      100% { box-shadow: 0 0 14px rgba(216, 58, 125, 0.65); }
     }
     .mock-switch-active::after {
       content: '';
@@ -616,6 +739,8 @@
       height: 100%;
       background: linear-gradient(90deg, #ff6b35, #ffaa00, #00f5d4);
       border-radius: 2px;
+      width: 0%;
+      transition: width 1.4s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     /* Right Explanation Deck */
@@ -686,12 +811,12 @@
       padding: clamp(18px, 4vw, 24px);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
-      transition: all 0.2s;
+      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s, box-shadow 0.35s;
     }
     .feature-card:hover {
-      border-color: rgba(157, 78, 221, 0.45);
-      transform: translateY(-3px);
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+      border-color: rgba(216, 58, 125, 0.55);
+      transform: translateY(-6px);
+      box-shadow: 0 16px 36px rgba(157, 78, 221, 0.22);
     }
     .feature-icon-box {
       width: 42px;
@@ -703,6 +828,12 @@
       place-items: center;
       color: var(--orange-light);
       margin-bottom: 14px;
+      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s, background 0.3s;
+    }
+    .feature-card:hover .feature-icon-box {
+      transform: scale(1.12) rotate(3deg);
+      border-color: rgba(255, 107, 53, 0.6);
+      background: linear-gradient(135deg, rgba(255, 107, 53, 0.3) 0%, rgba(157, 78, 221, 0.35) 100%);
     }
     .feature-card h4 {
       font-size: 16px;
@@ -736,7 +867,31 @@
       border: 1px solid var(--border);
       border-radius: 12px;
       padding: 18px;
+      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s, box-shadow 0.35s;
     }
+    .step-card:hover {
+      transform: translateY(-5px);
+      border-color: rgba(255, 170, 0, 0.55);
+      box-shadow: 0 14px 34px rgba(0, 0, 0, 0.5);
+    }
+
+    /* Scroll Reveal Animation System */
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1), transform 0.75s cubic-bezier(0.16, 1, 0.3, 1);
+      will-change: opacity, transform;
+    }
+    .reveal.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .reveal-delay-1 { transition-delay: 0.08s; }
+    .reveal-delay-2 { transition-delay: 0.16s; }
+    .reveal-delay-3 { transition-delay: 0.24s; }
+    .reveal-delay-4 { transition-delay: 0.32s; }
+    .reveal-delay-5 { transition-delay: 0.40s; }
+    .reveal-delay-6 { transition-delay: 0.48s; }
     .step-number {
       font-size: 11.5px;
       font-weight: 800;
@@ -862,6 +1017,23 @@
         padding: 10px;
       }
     }
+
+    /* Accessibility / Reduced Motion */
+    @media (prefers-reduced-motion: reduce) {
+      *, ::before, ::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
+        scroll-behavior: auto !important;
+      }
+      .reveal {
+        opacity: 1 !important;
+        transform: none !important;
+      }
+      .preview-showcase, .aura-orb, .btn-primary::after, .mock-switch-active {
+        animation: none !important;
+      }
+    }
   </style>
 </head>
 <body>
@@ -917,19 +1089,26 @@
 
   <!-- Hero Section -->
   <main>
+    <!-- Ambient Cosmic Aurora Orbs -->
+    <div class="cosmic-aura-wrap" aria-hidden="true">
+      <div class="aura-orb aura-1"></div>
+      <div class="aura-orb aura-2"></div>
+      <div class="aura-orb aura-3"></div>
+    </div>
+
     <section class="hero container">
-      <div class="pill-badge">
+      <div class="pill-badge anim-hero-badge">
         <span class="dot"></span>
         <span>Gravix v0.6.1 for Antigravity IDE is Live</span>
       </div>
-      <h1 class="hero-title">
+      <h1 class="hero-title anim-hero-title">
         Effortless Account & Quota Switching for <span class="gradient">Antigravity IDE</span>
       </h1>
-      <p class="hero-subtitle">
+      <p class="hero-subtitle anim-hero-sub">
         Seamlessly switch Google accounts, monitor real-time Gemini & Claude quotas, and keep long-running coding agents powered without interruption.
       </p>
 
-      <div class="cta-row">
+      <div class="cta-row anim-hero-cta">
         <button class="btn-primary download-trigger" id="download-hero-btn">
           <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor">
             <path d="M8 12l-4.5-4.5h3V1h3v6.5h3L8 12z"/>
@@ -946,7 +1125,7 @@
       </div>
 
       <!-- Platform OS Selector -->
-      <div class="os-selection-bar" role="tablist" aria-label="Select Operating System">
+      <div class="os-selection-bar anim-hero-os" role="tablist" aria-label="Select Operating System">
         <button class="os-pill-btn active" data-os="windows" id="os-btn-windows" role="tab" aria-selected="true">
           <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
             <path d="M0 3.449L9.75 2.1v9.451H0m10.949-9.602L24 0v11.4H10.949M0 12.6h9.75v9.451L0 20.699M10.949 12.6H24V24l-12.951-1.801"/>
@@ -962,7 +1141,7 @@
       </div>
 
       <!-- Terminal 1-Line Command -->
-      <div class="terminal-card">
+      <div class="terminal-card anim-hero-cmd">
         <div class="terminal-code-body">
           <span class="command-prefix">$ </span>
           <span class="command-text" id="command-text">curl.exe -L "https://raw.githubusercontent.com/aryamanm77/gravix/main/public/gravix-0.6.1.vsix" -o gravix.vsix; code --install-extension gravix.vsix</span>
@@ -1025,28 +1204,28 @@
                     <span class="mock-model-name">Gemini 2.5 Pro</span>
                     <span class="mock-model-pct">100%</span>
                   </div>
-                  <div class="mock-bar"><div class="mock-fill" style="width: 100%;"></div></div>
+                  <div class="mock-bar"><div class="mock-fill" data-target-width="100%"></div></div>
                 </div>
                 <div class="mock-model-row">
                   <div class="mock-model-top">
                     <span class="mock-model-name">Claude 3.5 Sonnet</span>
                     <span class="mock-model-pct">84%</span>
                   </div>
-                  <div class="mock-bar"><div class="mock-fill" style="width: 84%;"></div></div>
+                  <div class="mock-bar"><div class="mock-fill" data-target-width="84%"></div></div>
                 </div>
                 <div class="mock-model-row">
                   <div class="mock-model-top">
                     <span class="mock-model-name">Gemini 2.5 Flash</span>
                     <span class="mock-model-pct">92%</span>
                   </div>
-                  <div class="mock-bar"><div class="mock-fill" style="width: 92%;"></div></div>
+                  <div class="mock-bar"><div class="mock-fill" data-target-width="92%"></div></div>
                 </div>
               </div>
             </div>
           </div>
 
           <!-- Feature Highlights on Right -->
-          <div class="preview-info">
+          <div class="preview-info reveal">
             <h3>Engineered for High-Velocity Pair Programming</h3>
             <p>
               Gravix integrates directly with Antigravity IDE's internal Cloud Code authentication daemon, providing unmatched speed and reliability when managing Google AI accounts.
@@ -1078,11 +1257,11 @@
 
     <!-- Features Section -->
     <section class="container" id="features">
-      <h2 class="section-title">Built for Modern AI Developers</h2>
-      <p class="section-subtitle">Everything you need to manage multiple developer accounts and prevent agent stalls.</p>
+      <h2 class="section-title reveal">Built for Modern AI Developers</h2>
+      <p class="section-subtitle reveal">Everything you need to manage multiple developer accounts and prevent agent stalls.</p>
 
       <div class="features-grid">
-        <div class="feature-card">
+        <div class="feature-card reveal reveal-delay-1">
           <div class="feature-icon-box">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
               <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
@@ -1092,7 +1271,7 @@
           <p>Seamlessly change the active Antigravity session account with atomic verification and automatic rollback safety.</p>
         </div>
 
-        <div class="feature-card">
+        <div class="feature-card reveal reveal-delay-2">
           <div class="feature-icon-box">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
               <line x1="18" y1="20" x2="18" y2="10"/>
@@ -1105,7 +1284,7 @@
           <p>Direct inspection of Google Cloud Code endpoints for Gemini 2.5 Pro, Flash, Claude, and OpenAI models.</p>
         </div>
 
-        <div class="feature-card">
+        <div class="feature-card reveal reveal-delay-3">
           <div class="feature-icon-box">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
               <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
@@ -1116,7 +1295,7 @@
           <p>Monitors model exhaustion in the background and proactively offers an account with ready quota before tasks fail.</p>
         </div>
 
-        <div class="feature-card">
+        <div class="feature-card reveal reveal-delay-4">
           <div class="feature-icon-box">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="12" cy="12" r="10"/>
@@ -1130,7 +1309,7 @@
           <p>Discover and link accounts directly from your existing local Chrome browser profiles without retyping passwords.</p>
         </div>
 
-        <div class="feature-card">
+        <div class="feature-card reveal reveal-delay-5">
           <div class="feature-icon-box">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
               <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
@@ -1142,7 +1321,7 @@
           <p>Direct PKCE OAuth with zero external tracking. Your refresh tokens never leave your encrypted local machine storage.</p>
         </div>
 
-        <div class="feature-card">
+        <div class="feature-card reveal reveal-delay-6">
           <div class="feature-icon-box">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
               <path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3L12 3z"/>
@@ -1156,12 +1335,12 @@
 
     <!-- Installation Steps Section -->
     <section class="container" id="install">
-      <div class="install-section">
+      <div class="install-section reveal">
         <h2 class="section-title" style="margin-bottom: 8px;">How to Install in Antigravity IDE</h2>
         <p class="section-subtitle" style="margin-bottom: 24px;">Get started in 3 simple steps without needing marketplace access.</p>
 
         <div class="steps-row">
-          <div class="step-card">
+          <div class="step-card reveal reveal-delay-1">
             <div class="step-number">Step 01</div>
             <div class="step-title">Download VSIX</div>
             <div class="step-desc">
@@ -1169,7 +1348,7 @@
             </div>
           </div>
 
-          <div class="step-card">
+          <div class="step-card reveal reveal-delay-2">
             <div class="step-number">Step 02</div>
             <div class="step-title">Install Extension</div>
             <div class="step-desc" style="display:flex; flex-direction:column; gap:6px;">
@@ -1178,7 +1357,7 @@
             </div>
           </div>
 
-          <div class="step-card">
+          <div class="step-card reveal reveal-delay-3">
             <div class="step-number">Step 03</div>
             <div class="step-title">Enjoy Gravix</div>
             <div class="step-desc">
@@ -1191,7 +1370,7 @@
   </main>
 
   <!-- Footer -->
-  <footer>
+  <footer class="reveal">
     <div class="container">
       <p>Gravix is created and published by <strong>Aryaman-M</strong>. Open source under the MIT License.</p>
       <div class="footer-links">
@@ -1231,7 +1410,11 @@
       }
       currentCmd = data.cmd;
       if (commandText) {
-        commandText.textContent = data.cmd;
+        commandText.classList.add('cmd-swap');
+        setTimeout(() => {
+          commandText.textContent = data.cmd;
+          commandText.classList.remove('cmd-swap');
+        }, 120);
       }
     }
 
@@ -1334,6 +1517,46 @@
         }, 3500);
       });
     });
+
+    // Scroll Reveal Intersection Observer
+    const revealElements = document.querySelectorAll('.reveal');
+    if ('IntersectionObserver' in window) {
+      const revealObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('active');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, {
+        rootMargin: '0px 0px -40px 0px',
+        threshold: 0.1
+      });
+      revealElements.forEach(el => revealObserver.observe(el));
+
+      // Live Mock Quota Bars Observer
+      const previewSection = document.getElementById('preview');
+      if (previewSection) {
+        const quotaObserver = new IntersectionObserver((entries, observer) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              document.querySelectorAll('.mock-fill').forEach(bar => {
+                const target = bar.getAttribute('data-target-width') || '100%';
+                bar.style.width = target;
+              });
+              observer.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.2 });
+        quotaObserver.observe(previewSection);
+      }
+    } else {
+      // Fallback if IntersectionObserver is not supported
+      revealElements.forEach(el => el.classList.add('active'));
+      document.querySelectorAll('.mock-fill').forEach(bar => {
+        bar.style.width = bar.getAttribute('data-target-width') || '100%';
+      });
+    }
   </script>
 </body>
 </html>
