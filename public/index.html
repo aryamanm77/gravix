@@ -321,6 +321,49 @@
       transform: translateY(-2px);
     }
 
+    /* OS Platform Selector */
+    .os-selection-bar {
+      display: inline-flex;
+      align-items: center;
+      background: rgba(18, 13, 38, 0.95);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 4px;
+      gap: 6px;
+      margin: 22px auto 14px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    }
+    .os-pill-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-muted);
+      border-radius: 999px;
+      padding: 7px 18px;
+      font-size: 13px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .os-pill-btn:hover {
+      color: #fff;
+      background: rgba(157, 78, 221, 0.14);
+    }
+    .os-pill-btn.active {
+      color: #fff;
+      background: var(--gradient-brand);
+      border-color: rgba(255, 255, 255, 0.2);
+      box-shadow: 0 2px 14px rgba(157, 78, 221, 0.45);
+    }
+    .os-pill-btn svg {
+      width: 14px;
+      height: 14px;
+      flex-shrink: 0;
+    }
+
     /* Terminal Card */
     .terminal-card {
       background: rgba(13, 10, 26, 0.94);
@@ -935,7 +978,7 @@
             <path d="M8 12l-4.5-4.5h3V1h3v6.5h3L8 12z"/>
             <path d="M14 14H2v-2h12v2z"/>
           </svg>
-          <span>Download Gravix v0.6.1 (.VSIX)</span>
+          <span id="hero-btn-label">Download Gravix v0.6.1 (.VSIX)</span>
         </button>
         <a href="https://github.com/aryamanm77/gravix" target="_blank" rel="noopener" class="btn-secondary">
           <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor">
@@ -945,15 +988,27 @@
         </a>
       </div>
 
-
+      <!-- Platform OS Selector -->
+      <div class="os-selection-bar" role="tablist" aria-label="Select Operating System">
+        <button class="os-pill-btn active" data-os="windows" id="os-btn-windows" role="tab" aria-selected="true">
+          <svg viewBox="0 0 88 88" width="13" height="13" fill="currentColor">
+            <path d="M0 12.402l35.689-4.86v32.617H0V12.402zm0 37.039h35.689v32.617L0 77.198V49.441zm40.35-42.348L88 0v40.159H40.35V7.093zM88 49.441v40.159l-47.65-7.093V49.441H88z"/>
+          </svg>
+          <span>Windows</span>
+        </button>
+        <button class="os-pill-btn" data-os="macos-linux" id="os-btn-macos-linux" role="tab" aria-selected="false">
+          <svg viewBox="0 0 16 16" width="13" height="13" fill="currentColor">
+            <path d="M11.182.008C11.148-.03 9.923.023 8.857 1.18c-1.066 1.156-.902 2.482-.878 2.516s1.52.087 2.475-1.258.762-2.391.728-2.43M7.002 4.106c-.469 0-1.12.38-1.748.38-.646 0-1.57-.406-2.58-.382C1.354 4.137.018 5.437.001 7.494c-.015 1.796.883 4.256 1.83 5.617.915 1.314 1.767 2.766 3.197 2.766 1.385 0 1.94-.888 3.52-.888 1.579 0 2.08.888 3.526.888 1.48 0 2.378-1.488 3.292-2.802.66-.949 1.109-1.996 1.332-2.715-2.88-.95-2.75-4.992.148-6.196-.92-1.357-2.327-2.029-3.415-2.057-1.396-.037-2.428.888-3.03.888"/>
+          </svg>
+          <span>macOS / Linux</span>
+        </button>
+      </div>
 
       <!-- Terminal Quick Install / Download -->
       <div class="terminal-card">
         <div class="terminal-card-header">
-          <div class="terminal-tabs">
-            <button class="terminal-tab active" data-cmd="curl.exe -L &quot;https://raw.githubusercontent.com/aryamanm77/gravix/main/public/gravix-0.6.1.vsix&quot; -o gravix.vsix; code --install-extension gravix.vsix">PowerShell (1-Line)</button>
-            <button class="terminal-tab" data-cmd="curl -sL &quot;https://raw.githubusercontent.com/aryamanm77/gravix/main/public/gravix-0.6.1.vsix&quot; -o gravix.vsix &amp;&amp; code --install-extension gravix.vsix">macOS / Linux</button>
-            <button class="terminal-tab" data-cmd="curl.exe -L &quot;https://raw.githubusercontent.com/aryamanm77/gravix/main/public/gravix-0.6.1.vsix&quot; -o gravix-0.6.1.vsix">curl (Download only)</button>
+          <div class="terminal-tabs" id="terminal-tabs">
+            <!-- Dynamically populated based on selected OS -->
           </div>
           <button class="copy-btn" id="copy-btn" title="Copy command">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -965,7 +1020,7 @@
         </div>
         <div class="terminal-code-body">
           <span class="command-prefix">$ </span>
-          <span class="command-text" id="command-text">curl.exe -L &quot;https://raw.githubusercontent.com/aryamanm77/gravix/main/public/gravix-0.6.1.vsix&quot; -o gravix.vsix; code --install-extension gravix.vsix</span>
+          <span class="command-text" id="command-text">curl.exe -L "https://raw.githubusercontent.com/aryamanm77/gravix/main/public/gravix-0.6.1.vsix" -o gravix.vsix; code --install-extension gravix.vsix</span>
         </div>
       </div>
     </section>
@@ -1165,8 +1220,9 @@
           <div class="step-card">
             <div class="step-number">Step 02</div>
             <div class="step-title">Install Extension</div>
-            <div class="step-desc">
-              Run <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd> → <strong>Install from VSIX...</strong>, or in terminal: <code>code --install-extension gravix.vsix</code>
+            <div class="step-desc" style="display:flex; flex-direction:column; gap:6px;">
+              <div><strong>Windows:</strong> <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd> → <em>Install from VSIX</em>, or PowerShell: <code>code --install-extension gravix.vsix</code></div>
+              <div><strong>macOS / Linux:</strong> <kbd>Cmd</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd> → <em>Install from VSIX</em>, or Bash: <code>code --install-extension gravix.vsix</code></div>
             </div>
           </div>
 
@@ -1197,20 +1253,87 @@
   </footer>
 
   <script>
-    // Terminal Tabs & Copy Command Handler
-    const terminalTabs = document.querySelectorAll('.terminal-tab');
-    const commandText = document.getElementById('command-text');
-    let currentCmd = terminalTabs[0] ? terminalTabs[0].getAttribute('data-cmd') : '';
+    // Platform OS Switcher & Terminal Commands
+    const osConfigs = {
+      windows: {
+        label: 'Download for Windows (.VSIX)',
+        tabs: [
+          { name: '1-Line Install (PowerShell)', cmd: 'curl.exe -L "https://raw.githubusercontent.com/aryamanm77/gravix/main/public/gravix-0.6.1.vsix" -o gravix.vsix; code --install-extension gravix.vsix' },
+          { name: 'Download Only (curl)', cmd: 'curl.exe -L "https://raw.githubusercontent.com/aryamanm77/gravix/main/public/gravix-0.6.1.vsix" -o gravix-0.6.1.vsix' },
+          { name: 'PowerShell (irm)', cmd: 'irm "https://raw.githubusercontent.com/aryamanm77/gravix/main/public/gravix-0.6.1.vsix" -OutFile "gravix-0.6.1.vsix"' }
+        ]
+      },
+      'macos-linux': {
+        label: 'Download for macOS / Linux (.VSIX)',
+        tabs: [
+          { name: '1-Line Install (Bash/Zsh)', cmd: 'curl -sL "https://raw.githubusercontent.com/aryamanm77/gravix/main/public/gravix-0.6.1.vsix" -o gravix.vsix && code --install-extension gravix.vsix' },
+          { name: 'Download Only (curl)', cmd: 'curl -L "https://raw.githubusercontent.com/aryamanm77/gravix/main/public/gravix-0.6.1.vsix" -o gravix-0.6.1.vsix' },
+          { name: 'Download (wget)', cmd: 'wget -O gravix-0.6.1.vsix "https://raw.githubusercontent.com/aryamanm77/gravix/main/public/gravix-0.6.1.vsix"' }
+        ]
+      }
+    };
 
-    terminalTabs.forEach(tab => {
-      tab.addEventListener('click', () => {
-        terminalTabs.forEach(t => t.classList.remove('active'));
-        tab.classList.add('active');
-        currentCmd = tab.getAttribute('data-cmd');
-        commandText.textContent = currentCmd;
+    const osButtons = document.querySelectorAll('.os-pill-btn');
+    const terminalTabsContainer = document.getElementById('terminal-tabs');
+    const commandText = document.getElementById('command-text');
+    const heroBtnLabel = document.getElementById('hero-btn-label');
+    let currentCmd = '';
+
+    function renderOsTabs(osKey) {
+      const config = osConfigs[osKey];
+      if (!config || !terminalTabsContainer) return;
+
+      if (heroBtnLabel) {
+        heroBtnLabel.textContent = config.label;
+      }
+
+      terminalTabsContainer.innerHTML = '';
+      config.tabs.forEach((tabInfo, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'terminal-tab' + (idx === 0 ? ' active' : '');
+        btn.setAttribute('data-cmd', tabInfo.cmd);
+        btn.textContent = tabInfo.name;
+        btn.addEventListener('click', () => {
+          terminalTabsContainer.querySelectorAll('.terminal-tab').forEach(t => t.classList.remove('active'));
+          btn.classList.add('active');
+          currentCmd = tabInfo.cmd;
+          if (commandText) commandText.textContent = tabInfo.cmd;
+        });
+        terminalTabsContainer.appendChild(btn);
+      });
+
+      currentCmd = config.tabs[0].cmd;
+      if (commandText) commandText.textContent = currentCmd;
+    }
+
+    osButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        osButtons.forEach(b => {
+          b.classList.remove('active');
+          b.setAttribute('aria-selected', 'false');
+        });
+        btn.classList.add('active');
+        btn.setAttribute('aria-selected', 'true');
+        const osKey = btn.getAttribute('data-os');
+        renderOsTabs(osKey);
       });
     });
 
+    // Auto-detect visitor OS (Mac / Linux / Windows)
+    const isMacOrLinux = /Mac|iPhone|iPad|Linux/i.test(navigator.userAgent || navigator.platform);
+    const initialOs = isMacOrLinux ? 'macos-linux' : 'windows';
+    const activeBtn = document.querySelector(`.os-pill-btn[data-os="${initialOs}"]`);
+    if (activeBtn) {
+      osButtons.forEach(b => {
+        b.classList.remove('active');
+        b.setAttribute('aria-selected', 'false');
+      });
+      activeBtn.classList.add('active');
+      activeBtn.setAttribute('aria-selected', 'true');
+    }
+    renderOsTabs(initialOs);
+
+    // Copy Command Handler
     const copyBtn = document.getElementById('copy-btn');
     if (copyBtn) {
       copyBtn.addEventListener('click', () => {
