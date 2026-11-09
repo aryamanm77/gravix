@@ -1,5 +1,9 @@
 node_modules/
 .data/
-*.vsix
 .runtime/
 *.log
+
+# Allow distributable extension packages for Vercel & GitHub downloads
+!public/*.vsix
+!docs/*.vsix
+!gravix-*.vsix
