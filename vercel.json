@@ -13,7 +13,24 @@
         },
         {
           "key": "Content-Disposition",
-          "value": "attachment"
+          "value": "attachment; filename=\"gravix-0.6.1.vsix\""
+        },
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        },
+        {
+          "key": "Accept-Ranges",
+          "value": "bytes"
+        }
+      ]
+    },
+    {
+      "source": "/(.*)\\.(png|svg|ico|jpg)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
         }
       ]
     }
