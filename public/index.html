@@ -369,56 +369,16 @@
       background: rgba(13, 10, 26, 0.94);
       border: 1px solid var(--border);
       border-radius: 12px;
-      padding: 10px 14px;
-      max-width: 640px;
+      padding: 8px 14px;
+      max-width: 660px;
       width: 100%;
       margin: 0 auto;
       box-shadow: 0 8px 30px rgba(0, 0, 0, 0.45);
       backdrop-filter: blur(14px);
-      text-align: left;
-    }
-    .terminal-card-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 10px;
-      padding-bottom: 8px;
-      border-bottom: 1px solid rgba(157, 78, 221, 0.16);
-      margin-bottom: 8px;
-      flex-wrap: wrap;
-    }
-    .terminal-tabs {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      overflow-x: auto;
-      max-width: calc(100% - 90px);
-      scrollbar-width: none;
-    }
-    .terminal-tabs::-webkit-scrollbar {
-      display: none;
-    }
-    .terminal-tab {
-      background: transparent;
-      border: 1px solid transparent;
-      color: var(--text-muted);
-      border-radius: 6px;
-      padding: 4px 10px;
-      font-size: 11.5px;
-      font-weight: 600;
-      cursor: pointer;
-      font-family: inherit;
-      transition: all 0.15s ease;
-      white-space: nowrap;
-    }
-    .terminal-tab:hover {
-      color: #fff;
-      background: rgba(157, 78, 221, 0.14);
-    }
-    .terminal-tab.active {
-      color: #00f5d4;
-      background: rgba(0, 245, 212, 0.08);
-      border-color: rgba(0, 245, 212, 0.3);
+      gap: 12px;
     }
     .terminal-code-body {
       display: flex;
@@ -430,17 +390,14 @@
       white-space: nowrap;
       padding: 4px 2px;
       gap: 6px;
+      flex: 1;
+      scrollbar-width: none;
     }
     .terminal-code-body::-webkit-scrollbar {
-      height: 4px;
-    }
-    .terminal-code-body::-webkit-scrollbar-thumb {
-      background: rgba(157, 78, 221, 0.3);
-      border-radius: 2px;
+      display: none;
     }
     .command-prefix { color: var(--orange-light); user-select: none; }
     .command-text {
-      overflow-x: auto;
       white-space: nowrap;
       text-align: left;
     }
@@ -449,16 +406,16 @@
       border: 1px solid rgba(157, 78, 221, 0.3);
       color: #c77dff;
       border-radius: 6px;
-      padding: 5px 10px;
-      font-size: 11px;
+      padding: 6px 12px;
+      font-size: 11.5px;
       font-weight: 600;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
-      gap: 5px;
+      gap: 6px;
       transition: all 0.15s;
       flex-shrink: 0;
-      min-height: 28px;
+      min-height: 32px;
     }
     .copy-btn:hover {
       background: rgba(157, 78, 221, 0.3);
@@ -1004,24 +961,19 @@
         </button>
       </div>
 
-      <!-- Terminal Quick Install / Download -->
+      <!-- Terminal 1-Line Command -->
       <div class="terminal-card">
-        <div class="terminal-card-header">
-          <div class="terminal-tabs" id="terminal-tabs">
-            <!-- Dynamically populated based on selected OS -->
-          </div>
-          <button class="copy-btn" id="copy-btn" title="Copy command">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-            </svg>
-            <span>Copy</span>
-          </button>
-        </div>
         <div class="terminal-code-body">
           <span class="command-prefix">$ </span>
           <span class="command-text" id="command-text">curl.exe -L "https://raw.githubusercontent.com/aryamanm77/gravix/main/public/gravix-0.6.1.vsix" -o gravix.vsix; code --install-extension gravix.vsix</span>
         </div>
+        <button class="copy-btn" id="copy-btn" title="Copy command">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+          </svg>
+          <span>Copy</span>
+        </button>
       </div>
     </section>
 
@@ -1253,57 +1205,34 @@
   </footer>
 
   <script>
-    // Platform OS Switcher & Terminal Commands
-    const osConfigs = {
+    // Platform OS Switcher & 1-Line Terminal Commands
+    const osData = {
       windows: {
         label: 'Download for Windows (.VSIX)',
-        tabs: [
-          { name: '1-Line Install (PowerShell)', cmd: 'curl.exe -L "https://raw.githubusercontent.com/aryamanm77/gravix/main/public/gravix-0.6.1.vsix" -o gravix.vsix; code --install-extension gravix.vsix' },
-          { name: 'Download Only (curl)', cmd: 'curl.exe -L "https://raw.githubusercontent.com/aryamanm77/gravix/main/public/gravix-0.6.1.vsix" -o gravix-0.6.1.vsix' },
-          { name: 'PowerShell (irm)', cmd: 'irm "https://raw.githubusercontent.com/aryamanm77/gravix/main/public/gravix-0.6.1.vsix" -OutFile "gravix-0.6.1.vsix"' }
-        ]
+        cmd: 'curl.exe -L "https://raw.githubusercontent.com/aryamanm77/gravix/main/public/gravix-0.6.1.vsix" -o gravix.vsix; code --install-extension gravix.vsix'
       },
       'macos-linux': {
         label: 'Download for macOS / Linux (.VSIX)',
-        tabs: [
-          { name: '1-Line Install (Bash/Zsh)', cmd: 'curl -sL "https://raw.githubusercontent.com/aryamanm77/gravix/main/public/gravix-0.6.1.vsix" -o gravix.vsix && code --install-extension gravix.vsix' },
-          { name: 'Download Only (curl)', cmd: 'curl -L "https://raw.githubusercontent.com/aryamanm77/gravix/main/public/gravix-0.6.1.vsix" -o gravix-0.6.1.vsix' },
-          { name: 'Download (wget)', cmd: 'wget -O gravix-0.6.1.vsix "https://raw.githubusercontent.com/aryamanm77/gravix/main/public/gravix-0.6.1.vsix"' }
-        ]
+        cmd: 'curl -sL "https://raw.githubusercontent.com/aryamanm77/gravix/main/public/gravix-0.6.1.vsix" -o gravix.vsix && code --install-extension gravix.vsix'
       }
     };
 
     const osButtons = document.querySelectorAll('.os-pill-btn');
-    const terminalTabsContainer = document.getElementById('terminal-tabs');
     const commandText = document.getElementById('command-text');
     const heroBtnLabel = document.getElementById('hero-btn-label');
-    let currentCmd = '';
+    let currentCmd = osData.windows.cmd;
 
-    function renderOsTabs(osKey) {
-      const config = osConfigs[osKey];
-      if (!config || !terminalTabsContainer) return;
+    function setPlatform(osKey) {
+      const data = osData[osKey];
+      if (!data) return;
 
       if (heroBtnLabel) {
-        heroBtnLabel.textContent = config.label;
+        heroBtnLabel.textContent = data.label;
       }
-
-      terminalTabsContainer.innerHTML = '';
-      config.tabs.forEach((tabInfo, idx) => {
-        const btn = document.createElement('button');
-        btn.className = 'terminal-tab' + (idx === 0 ? ' active' : '');
-        btn.setAttribute('data-cmd', tabInfo.cmd);
-        btn.textContent = tabInfo.name;
-        btn.addEventListener('click', () => {
-          terminalTabsContainer.querySelectorAll('.terminal-tab').forEach(t => t.classList.remove('active'));
-          btn.classList.add('active');
-          currentCmd = tabInfo.cmd;
-          if (commandText) commandText.textContent = tabInfo.cmd;
-        });
-        terminalTabsContainer.appendChild(btn);
-      });
-
-      currentCmd = config.tabs[0].cmd;
-      if (commandText) commandText.textContent = currentCmd;
+      currentCmd = data.cmd;
+      if (commandText) {
+        commandText.textContent = data.cmd;
+      }
     }
 
     osButtons.forEach(btn => {
@@ -1314,8 +1243,7 @@
         });
         btn.classList.add('active');
         btn.setAttribute('aria-selected', 'true');
-        const osKey = btn.getAttribute('data-os');
-        renderOsTabs(osKey);
+        setPlatform(btn.getAttribute('data-os'));
       });
     });
 
@@ -1331,7 +1259,7 @@
       activeBtn.classList.add('active');
       activeBtn.setAttribute('aria-selected', 'true');
     }
-    renderOsTabs(initialOs);
+    setPlatform(initialOs);
 
     // Copy Command Handler
     const copyBtn = document.getElementById('copy-btn');
