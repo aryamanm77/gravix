@@ -42,11 +42,6 @@
       font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       line-height: 1.6;
       overflow-x: hidden;
-      background-image: 
-        radial-gradient(circle at 50% -10%, rgba(157, 78, 221, 0.22) 0%, transparent 55%),
-        radial-gradient(circle at 90% 40%, rgba(255, 107, 53, 0.12) 0%, transparent 45%),
-        radial-gradient(circle at 10% 70%, rgba(216, 58, 125, 0.14) 0%, transparent 50%);
-      background-attachment: fixed;
       -webkit-font-smoothing: antialiased;
     }
 
@@ -206,64 +201,133 @@
       cursor: pointer;
     }
 
-    /* Ambient Cosmic Aura Background Orbs */
-    .cosmic-aura-wrap {
-      position: absolute;
-      top: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 100%;
-      max-width: 1200px;
-      height: 720px;
+    /* Full-Screen Animated Cosmic Background Canvas */
+    .cosmic-canvas {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
       overflow: hidden;
       pointer-events: none;
-      z-index: 0;
-    }
-    .aura-orb {
-      position: absolute;
-      border-radius: 50%;
-      filter: blur(85px);
-      opacity: 0.42;
-      will-change: transform;
-    }
-    .aura-1 {
-      width: 480px;
-      height: 480px;
-      background: radial-gradient(circle, rgba(157, 78, 221, 0.45) 0%, rgba(216, 58, 125, 0.22) 50%, transparent 70%);
-      top: -80px;
-      left: 15%;
-      animation: floatAura1 16s ease-in-out infinite alternate;
-    }
-    .aura-2 {
-      width: 420px;
-      height: 420px;
-      background: radial-gradient(circle, rgba(255, 107, 53, 0.35) 0%, rgba(216, 58, 125, 0.18) 50%, transparent 70%);
-      top: 120px;
-      right: 12%;
-      animation: floatAura2 20s ease-in-out infinite alternate;
-    }
-    .aura-3 {
-      width: 320px;
-      height: 320px;
-      background: radial-gradient(circle, rgba(0, 245, 212, 0.22) 0%, transparent 70%);
-      top: 260px;
-      left: 8%;
-      animation: floatAura3 14s ease-in-out infinite alternate;
+      z-index: -1;
+      background-color: var(--bg);
     }
 
-    @keyframes floatAura1 {
-      0% { transform: translate(0, 0) scale(1); }
-      50% { transform: translate(45px, -35px) scale(1.1); }
-      100% { transform: translate(-30px, 25px) scale(0.95); }
+    /* Morphing Fluid Gradient Mesh */
+    .cosmic-mesh {
+      position: absolute;
+      inset: -25%;
+      width: 150%;
+      height: 150%;
+      background: 
+        radial-gradient(circle at 20% 15%, rgba(157, 78, 221, 0.28) 0%, transparent 45%),
+        radial-gradient(circle at 80% 25%, rgba(255, 107, 53, 0.22) 0%, transparent 45%),
+        radial-gradient(circle at 45% 85%, rgba(216, 58, 125, 0.22) 0%, transparent 50%),
+        radial-gradient(circle at 15% 85%, rgba(0, 245, 212, 0.16) 0%, transparent 42%);
+      animation: meshFloat 24s ease-in-out infinite alternate;
+      will-change: transform, filter;
+      transition: filter 0.6s ease;
     }
-    @keyframes floatAura2 {
-      0% { transform: translate(0, 0) scale(1); }
-      50% { transform: translate(-45px, 35px) scale(1.12); }
-      100% { transform: translate(25px, -20px) scale(0.92); }
+
+    @keyframes meshFloat {
+      0% {
+        transform: translate(0, 0) rotate(0deg) scale(1);
+        filter: hue-rotate(0deg);
+      }
+      50% {
+        transform: translate(-35px, 45px) rotate(3deg) scale(1.06);
+        filter: hue-rotate(20deg);
+      }
+      100% {
+        transform: translate(40px, -35px) rotate(-3deg) scale(0.96);
+        filter: hue-rotate(-15deg);
+      }
     }
-    @keyframes floatAura3 {
-      0% { transform: translate(0, 0) scale(0.9); }
-      100% { transform: translate(50px, -40px) scale(1.15); }
+
+    /* Futuristic Grid Matrix Overlay */
+    .cosmic-grid {
+      position: absolute;
+      inset: 0;
+      background-image: 
+        linear-gradient(rgba(157, 78, 221, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(157, 78, 221, 0.05) 1px, transparent 1px);
+      background-size: 54px 54px;
+      mask-image: radial-gradient(ellipse 90% 80% at 50% 50%, #000 35%, transparent 90%);
+      -webkit-mask-image: radial-gradient(ellipse 90% 80% at 50% 50%, #000 35%, transparent 90%);
+      animation: gridBreathe 8s ease-in-out infinite alternate;
+    }
+
+    @keyframes gridBreathe {
+      0% { opacity: 0.4; }
+      100% { opacity: 0.85; }
+    }
+
+    /* Floating Aurora Nodes */
+    .cosmic-orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(90px);
+      will-change: transform;
+    }
+
+    .orb-purple {
+      width: clamp(380px, 45vw, 620px);
+      height: clamp(380px, 45vw, 620px);
+      background: radial-gradient(circle, rgba(157, 78, 221, 0.48) 0%, rgba(123, 44, 191, 0.2) 55%, transparent 70%);
+      top: -8%;
+      left: 12%;
+      animation: orbDrift1 18s cubic-bezier(0.4, 0, 0.2, 1) infinite alternate;
+    }
+
+    .orb-orange {
+      width: clamp(340px, 40vw, 560px);
+      height: clamp(340px, 40vw, 560px);
+      background: radial-gradient(circle, rgba(255, 107, 53, 0.38) 0%, rgba(255, 140, 66, 0.15) 50%, transparent 70%);
+      top: 22%;
+      right: -5%;
+      animation: orbDrift2 24s cubic-bezier(0.4, 0, 0.2, 1) infinite alternate;
+    }
+
+    .orb-teal {
+      width: clamp(320px, 35vw, 500px);
+      height: clamp(320px, 35vw, 500px);
+      background: radial-gradient(circle, rgba(0, 245, 212, 0.24) 0%, rgba(0, 180, 216, 0.1) 50%, transparent 70%);
+      bottom: 8%;
+      left: 5%;
+      animation: orbDrift3 20s cubic-bezier(0.4, 0, 0.2, 1) infinite alternate;
+    }
+
+    .orb-magenta {
+      width: clamp(360px, 42vw, 580px);
+      height: clamp(360px, 42vw, 580px);
+      background: radial-gradient(circle, rgba(216, 58, 125, 0.32) 0%, rgba(157, 78, 221, 0.12) 50%, transparent 70%);
+      bottom: -12%;
+      right: 15%;
+      animation: orbDrift4 26s cubic-bezier(0.4, 0, 0.2, 1) infinite alternate;
+    }
+
+    @keyframes orbDrift1 {
+      0% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(60px, 45px) scale(1.12); }
+      100% { transform: translate(-45px, 25px) scale(0.92); }
+    }
+
+    @keyframes orbDrift2 {
+      0% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(-65px, -35px) scale(1.15); }
+      100% { transform: translate(35px, 50px) scale(0.88); }
+    }
+
+    @keyframes orbDrift3 {
+      0% { transform: translate(0, 0) scale(0.92); }
+      50% { transform: translate(50px, -55px) scale(1.18); }
+      100% { transform: translate(-30px, 30px) scale(1.02); }
+    }
+
+    @keyframes orbDrift4 {
+      0% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(-50px, 40px) scale(1.08); }
+      100% { transform: translate(45px, -45px) scale(0.94); }
     }
 
     /* Hero Load Entrance Animations */
@@ -1030,13 +1094,23 @@
         opacity: 1 !important;
         transform: none !important;
       }
-      .preview-showcase, .aura-orb, .btn-primary::after, .mock-switch-active {
+      .preview-showcase, .cosmic-mesh, .cosmic-grid, .cosmic-orb, .btn-primary::after, .mock-switch-active {
         animation: none !important;
       }
     }
   </style>
 </head>
 <body>
+
+  <!-- Full-Page Animated Cosmic Background Canvas -->
+  <div class="cosmic-canvas" aria-hidden="true">
+    <div class="cosmic-mesh"></div>
+    <div class="cosmic-grid"></div>
+    <div class="cosmic-orb orb-purple"></div>
+    <div class="cosmic-orb orb-orange"></div>
+    <div class="cosmic-orb orb-teal"></div>
+    <div class="cosmic-orb orb-magenta"></div>
+  </div>
 
   <!-- Navigation Bar -->
   <header class="navbar">
@@ -1089,13 +1163,6 @@
 
   <!-- Hero Section -->
   <main>
-    <!-- Ambient Cosmic Aurora Orbs -->
-    <div class="cosmic-aura-wrap" aria-hidden="true">
-      <div class="aura-orb aura-1"></div>
-      <div class="aura-orb aura-2"></div>
-      <div class="aura-orb aura-3"></div>
-    </div>
-
     <section class="hero container">
       <div class="pill-badge anim-hero-badge">
         <span class="dot"></span>
@@ -1557,6 +1624,27 @@
         bar.style.width = bar.getAttribute('data-target-width') || '100%';
       });
     }
+
+    // Scroll-Linked Background Color & Parallax Transition
+    const meshEl = document.querySelector('.cosmic-mesh');
+    let bgScrollTicking = false;
+    window.addEventListener('scroll', () => {
+      if (!bgScrollTicking) {
+        window.requestAnimationFrame(() => {
+          const maxScroll = (document.documentElement.scrollHeight - window.innerHeight) || 1;
+          const scrollPct = Math.min(Math.max(window.scrollY / maxScroll, 0), 1);
+          if (meshEl) {
+            // Smoothly shifts the cosmic hue spectrum by 35 degrees across sections
+            const hueDeg = Math.round(scrollPct * 35);
+            const translateY = Math.round(scrollPct * -60);
+            meshEl.style.transform = `translate(0, ${translateY}px) scale(1)`;
+            meshEl.style.filter = `hue-rotate(${hueDeg}deg)`;
+          }
+          bgScrollTicking = false;
+        });
+        bgScrollTicking = true;
+      }
+    }, { passive: true });
   </script>
 </body>
 </html>
