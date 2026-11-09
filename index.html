@@ -321,30 +321,86 @@
       transform: translateY(-2px);
     }
 
-    /* Terminal Command Box */
-    .command-box {
-      display: inline-flex;
-      align-items: center;
-      background: rgba(13, 10, 26, 0.9);
+    /* Terminal Card */
+    .terminal-card {
+      background: rgba(13, 10, 26, 0.94);
       border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 8px 12px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: clamp(11.5px, 2.5vw, 13px);
-      color: #d8cde8;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-      max-width: 520px;
+      border-radius: 12px;
+      padding: 10px 14px;
+      max-width: 640px;
       width: 100%;
-      justify-content: space-between;
-      gap: 8px;
+      margin: 0 auto;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.45);
+      backdrop-filter: blur(14px);
+      text-align: left;
     }
+    .terminal-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid rgba(157, 78, 221, 0.16);
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+    }
+    .terminal-tabs {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      overflow-x: auto;
+      max-width: calc(100% - 90px);
+      scrollbar-width: none;
+    }
+    .terminal-tabs::-webkit-scrollbar {
+      display: none;
+    }
+    .terminal-tab {
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-muted);
+      border-radius: 6px;
+      padding: 4px 10px;
+      font-size: 11.5px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+    }
+    .terminal-tab:hover {
+      color: #fff;
+      background: rgba(157, 78, 221, 0.14);
+    }
+    .terminal-tab.active {
+      color: #00f5d4;
+      background: rgba(0, 245, 212, 0.08);
+      border-color: rgba(0, 245, 212, 0.3);
+    }
+    .terminal-code-body {
+      display: flex;
+      align-items: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: clamp(11.5px, 2.5vw, 12.5px);
+      color: #d8cde8;
+      overflow-x: auto;
+      white-space: nowrap;
+      padding: 4px 2px;
+      gap: 6px;
+    }
+    .terminal-code-body::-webkit-scrollbar {
+      height: 4px;
+    }
+    .terminal-code-body::-webkit-scrollbar-thumb {
+      background: rgba(157, 78, 221, 0.3);
+      border-radius: 2px;
+    }
+    .command-prefix { color: var(--orange-light); user-select: none; }
     .command-text {
-      overflow: hidden;
-      text-overflow: ellipsis;
+      overflow-x: auto;
       white-space: nowrap;
       text-align: left;
     }
-    .command-prefix { color: var(--orange-light); user-select: none; }
     .copy-btn {
       background: rgba(157, 78, 221, 0.15);
       border: 1px solid rgba(157, 78, 221, 0.3);
@@ -359,7 +415,7 @@
       gap: 5px;
       transition: all 0.15s;
       flex-shrink: 0;
-      min-height: 30px;
+      min-height: 28px;
     }
     .copy-btn:hover {
       background: rgba(157, 78, 221, 0.3);
@@ -891,12 +947,26 @@
 
 
 
-      <!-- Quick Command Copy -->
-      <div class="command-box" style="margin: 0 auto;">
-        <span class="command-text"><span class="command-prefix">$ </span>code --install-extension gravix-0.6.1.vsix</span>
-        <button class="copy-btn" id="copy-btn" title="Copy install command">
-          <span>Copy</span>
-        </button>
+      <!-- Terminal Quick Install / Download -->
+      <div class="terminal-card">
+        <div class="terminal-card-header">
+          <div class="terminal-tabs">
+            <button class="terminal-tab active" data-cmd="curl.exe -L &quot;https://raw.githubusercontent.com/aryamanm77/gravix/main/public/gravix-0.6.1.vsix&quot; -o gravix.vsix; code --install-extension gravix.vsix">PowerShell (1-Line)</button>
+            <button class="terminal-tab" data-cmd="curl -sL &quot;https://raw.githubusercontent.com/aryamanm77/gravix/main/public/gravix-0.6.1.vsix&quot; -o gravix.vsix &amp;&amp; code --install-extension gravix.vsix">macOS / Linux</button>
+            <button class="terminal-tab" data-cmd="curl.exe -L &quot;https://raw.githubusercontent.com/aryamanm77/gravix/main/public/gravix-0.6.1.vsix&quot; -o gravix-0.6.1.vsix">curl (Download only)</button>
+          </div>
+          <button class="copy-btn" id="copy-btn" title="Copy command">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+            </svg>
+            <span>Copy</span>
+          </button>
+        </div>
+        <div class="terminal-code-body">
+          <span class="command-prefix">$ </span>
+          <span class="command-text" id="command-text">curl.exe -L &quot;https://raw.githubusercontent.com/aryamanm77/gravix/main/public/gravix-0.6.1.vsix&quot; -o gravix.vsix; code --install-extension gravix.vsix</span>
+        </div>
       </div>
     </section>
 
@@ -1088,15 +1158,15 @@
             <div class="step-number">Step 01</div>
             <div class="step-title">Download VSIX</div>
             <div class="step-desc">
-              Download the <button class="download-trigger" style="background:none;border:none;color:#ffaa00;font-weight:600;text-decoration:underline;cursor:pointer;font-family:inherit;">gravix-0.6.1.vsix</button> package directly to your device.
+              Download the <button class="download-trigger" style="background:none;border:none;color:#ffaa00;font-weight:600;text-decoration:underline;cursor:pointer;font-family:inherit;">gravix-0.6.1.vsix</button> package via button or terminal <code>curl</code>.
             </div>
           </div>
 
           <div class="step-card">
             <div class="step-number">Step 02</div>
-            <div class="step-title">Install from VSIX</div>
+            <div class="step-title">Install Extension</div>
             <div class="step-desc">
-              In Antigravity IDE, press <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd> and run <strong>Extensions: Install from VSIX...</strong>
+              Run <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd> → <strong>Install from VSIX...</strong>, or in terminal: <code>code --install-extension gravix.vsix</code>
             </div>
           </div>
 
@@ -1127,20 +1197,36 @@
   </footer>
 
   <script>
-    // Copy Command Handler
-    const copyBtn = document.getElementById('copy-btn');
-    copyBtn.addEventListener('click', () => {
-      navigator.clipboard.writeText('code --install-extension gravix-0.6.1.vsix').then(() => {
-        const span = copyBtn.querySelector('span');
-        const orig = span.textContent;
-        span.textContent = 'Copied!';
-        copyBtn.style.color = '#00f5d4';
-        setTimeout(() => {
-          span.textContent = orig;
-          copyBtn.style.color = '';
-        }, 2000);
+    // Terminal Tabs & Copy Command Handler
+    const terminalTabs = document.querySelectorAll('.terminal-tab');
+    const commandText = document.getElementById('command-text');
+    let currentCmd = terminalTabs[0] ? terminalTabs[0].getAttribute('data-cmd') : '';
+
+    terminalTabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        terminalTabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        currentCmd = tab.getAttribute('data-cmd');
+        commandText.textContent = currentCmd;
       });
     });
+
+    const copyBtn = document.getElementById('copy-btn');
+    if (copyBtn) {
+      copyBtn.addEventListener('click', () => {
+        const textToCopy = currentCmd || (commandText ? commandText.textContent : '');
+        navigator.clipboard.writeText(textToCopy).then(() => {
+          const span = copyBtn.querySelector('span');
+          const orig = span ? span.textContent : 'Copy';
+          if (span) span.textContent = 'Copied!';
+          copyBtn.style.color = '#00f5d4';
+          setTimeout(() => {
+            if (span) span.textContent = orig;
+            copyBtn.style.color = '';
+          }, 2000);
+        });
+      });
+    }
 
     // Mobile Hamburger Menu Toggle
     const menuToggle = document.getElementById('menu-toggle');
