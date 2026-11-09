@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Gravix — Next-Gen Account & Quota Manager for Antigravity IDE</title>
   <meta name="description" content="Switch Google accounts with one click, monitor Gemini and Claude quotas in real-time, and auto-switch accounts seamlessly in Antigravity IDE.">
   <link rel="icon" type="image/png" href="gravix-logo.png">
@@ -13,8 +13,8 @@
     :root {
       --bg: #090714;
       --surface: #120e24;
-      --surface-card: rgba(22, 17, 44, 0.75);
-      --surface-hover: rgba(35, 26, 68, 0.8);
+      --surface-card: rgba(22, 17, 44, 0.78);
+      --surface-hover: rgba(35, 26, 68, 0.85);
       --border: rgba(157, 78, 221, 0.22);
       --border-glow: rgba(157, 78, 221, 0.45);
       --text: #f5f2fd;
@@ -31,6 +31,10 @@
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
+    html {
+      scroll-behavior: smooth;
+    }
+
     body {
       background-color: var(--bg);
       color: var(--text);
@@ -42,69 +46,78 @@
         radial-gradient(circle at 90% 40%, rgba(255, 107, 53, 0.12) 0%, transparent 45%),
         radial-gradient(circle at 10% 70%, rgba(216, 58, 125, 0.14) 0%, transparent 50%);
       background-attachment: fixed;
+      -webkit-font-smoothing: antialiased;
     }
 
-    /* Container */
+    /* Responsive Container */
     .container {
+      width: 100%;
       max-width: 1160px;
       margin: 0 auto;
-      padding: 0 24px;
+      padding-left: max(20px, env(safe-area-inset-left));
+      padding-right: max(20px, env(safe-area-inset-right));
     }
 
     /* Navbar */
     .navbar {
       position: sticky;
       top: 0;
-      z-index: 100;
+      z-index: 200;
       backdrop-filter: blur(20px);
-      background: rgba(9, 7, 20, 0.75);
+      -webkit-backdrop-filter: blur(20px);
+      background: rgba(9, 7, 20, 0.85);
       border-bottom: 1px solid var(--border);
-      padding: 16px 0;
+      padding: 14px 0;
     }
     .nav-inner {
       display: flex;
       align-items: center;
       justify-content: space-between;
+      gap: 16px;
     }
     .brand {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
       text-decoration: none;
       color: #fff;
+      flex-shrink: 0;
     }
     .brand-logo-img {
-      width: 36px;
-      height: 36px;
-      border-radius: 10px;
+      width: 34px;
+      height: 34px;
+      border-radius: 9px;
       background: #171030;
-      padding: 4px;
+      padding: 3px;
       border: 1px solid rgba(157, 78, 221, 0.4);
-      box-shadow: 0 0 16px rgba(255, 107, 53, 0.35);
+      box-shadow: 0 0 14px rgba(255, 107, 53, 0.35);
       transition: transform 0.2s;
     }
     .brand:hover .brand-logo-img {
       transform: scale(1.05) rotate(-3deg);
     }
     .brand-name {
-      font-size: 20px;
+      font-size: 19px;
       font-weight: 800;
       letter-spacing: -0.02em;
       background: linear-gradient(135deg, #ffffff 40%, #d83a7d 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
+
+    /* Desktop Nav Links */
     .nav-links {
       display: flex;
       align-items: center;
-      gap: 24px;
+      gap: 22px;
     }
     .nav-links a {
       color: var(--text-muted);
       text-decoration: none;
-      font-size: 14px;
+      font-size: 13.5px;
       font-weight: 500;
       transition: color 0.15s;
+      white-space: nowrap;
     }
     .nav-links a:hover {
       color: #fff;
@@ -120,8 +133,9 @@
       text-decoration: none;
       display: inline-flex;
       align-items: center;
-      gap: 8px;
+      gap: 7px;
       transition: all 0.2s;
+      white-space: nowrap;
     }
     .nav-btn:hover {
       border-color: var(--orange);
@@ -129,9 +143,69 @@
       transform: translateY(-1px);
     }
 
+    /* Mobile Menu Toggle Button */
+    .menu-toggle {
+      display: none;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: #f3effc;
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      cursor: pointer;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      flex-shrink: 0;
+    }
+    .menu-toggle svg {
+      width: 20px;
+      height: 20px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2;
+    }
+
+    /* Mobile Dropdown Drawer */
+    .mobile-menu {
+      display: none;
+      flex-direction: column;
+      gap: 12px;
+      padding: 16px 20px 20px;
+      background: rgba(14, 10, 30, 0.98);
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(20px);
+    }
+    .mobile-menu.open {
+      display: flex;
+    }
+    .mobile-menu a {
+      color: #e5def4;
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 600;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(157, 78, 221, 0.12);
+    }
+    .mobile-menu .mobile-download-btn {
+      margin-top: 6px;
+      padding: 12px;
+      border-radius: 10px;
+      background: var(--gradient-brand);
+      color: #fff;
+      text-align: center;
+      font-weight: 700;
+      font-size: 14px;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
     /* Hero Section */
     .hero {
-      padding: 90px 0 70px;
+      padding: clamp(48px, 10vw, 84px) 0 clamp(40px, 8vw, 64px);
       text-align: center;
       position: relative;
     }
@@ -143,11 +217,12 @@
       border-radius: 999px;
       background: rgba(157, 78, 221, 0.12);
       border: 1px solid rgba(157, 78, 221, 0.35);
-      font-size: 12.5px;
+      font-size: clamp(11.5px, 2.5vw, 13px);
       font-weight: 600;
       color: #e0aaff;
-      margin-bottom: 24px;
+      margin-bottom: 20px;
       box-shadow: 0 2px 12px rgba(157, 78, 221, 0.15);
+      max-width: 100%;
     }
     .pill-badge .dot {
       width: 7px;
@@ -156,6 +231,7 @@
       background: var(--green);
       box-shadow: 0 0 8px var(--green);
       animation: pulse 2s infinite;
+      flex-shrink: 0;
     }
     @keyframes pulse {
       0%, 100% { opacity: 1; transform: scale(1); }
@@ -163,14 +239,15 @@
     }
 
     .hero-title {
-      font-size: 54px;
+      font-size: clamp(28px, 6vw + 6px, 52px);
       line-height: 1.15;
       font-weight: 800;
       letter-spacing: -0.03em;
-      margin-bottom: 20px;
-      max-width: 880px;
+      margin-bottom: 18px;
+      max-width: 860px;
       margin-left: auto;
       margin-right: auto;
+      word-wrap: break-word;
     }
     .hero-title span.gradient {
       background: var(--gradient-brand);
@@ -179,11 +256,12 @@
       display: inline-block;
     }
     .hero-subtitle {
-      font-size: 18px;
+      font-size: clamp(14.5px, 2.5vw + 4px, 17.5px);
       color: var(--text-muted);
-      max-width: 680px;
-      margin: 0 auto 36px;
+      max-width: 660px;
+      margin: 0 auto 32px;
       font-weight: 400;
+      line-height: 1.6;
     }
 
     /* Hero CTA Row */
@@ -191,44 +269,48 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 16px;
+      gap: 14px;
       flex-wrap: wrap;
-      margin-bottom: 30px;
+      margin-bottom: 24px;
     }
     .btn-primary {
-      padding: 14px 28px;
+      padding: 13px 26px;
       border-radius: 12px;
       background: var(--gradient-brand);
       color: #ffffff;
-      font-size: 15px;
+      font-size: clamp(13.5px, 2vw + 6px, 15px);
       font-weight: 700;
       text-decoration: none;
       display: inline-flex;
       align-items: center;
-      gap: 10px;
+      justify-content: center;
+      gap: 9px;
       box-shadow: 0 4px 24px rgba(216, 58, 125, 0.42), inset 0 1px 0 rgba(255, 255, 255, 0.25);
       border: 1px solid rgba(255, 107, 53, 0.5);
       transition: all 0.2s;
       cursor: pointer;
+      min-height: 48px;
     }
     .btn-primary:hover {
       transform: translateY(-2px);
       box-shadow: 0 6px 30px rgba(216, 58, 125, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.35);
     }
     .btn-secondary {
-      padding: 14px 24px;
+      padding: 13px 22px;
       border-radius: 12px;
       background: var(--surface-card);
       border: 1px solid var(--border);
       color: #fff;
-      font-size: 15px;
+      font-size: clamp(13.5px, 2vw + 6px, 15px);
       font-weight: 600;
       text-decoration: none;
       display: inline-flex;
       align-items: center;
-      gap: 9px;
+      justify-content: center;
+      gap: 8px;
       backdrop-filter: blur(10px);
       transition: all 0.2s;
+      min-height: 48px;
     }
     .btn-secondary:hover {
       background: var(--surface-hover);
@@ -243,20 +325,21 @@
       background: rgba(13, 10, 26, 0.9);
       border: 1px solid var(--border);
       border-radius: 10px;
-      padding: 8px 14px;
+      padding: 8px 12px;
       font-family: 'JetBrains Mono', monospace;
-      font-size: 13px;
+      font-size: clamp(11.5px, 2.5vw, 13px);
       color: #d8cde8;
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-      max-width: 540px;
+      max-width: 520px;
       width: 100%;
       justify-content: space-between;
+      gap: 8px;
     }
     .command-text {
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
-      margin-right: 12px;
+      text-align: left;
     }
     .command-prefix { color: var(--orange-light); user-select: none; }
     .copy-btn {
@@ -264,7 +347,7 @@
       border: 1px solid rgba(157, 78, 221, 0.3);
       color: #c77dff;
       border-radius: 6px;
-      padding: 4px 10px;
+      padding: 5px 10px;
       font-size: 11px;
       font-weight: 600;
       cursor: pointer;
@@ -272,6 +355,8 @@
       align-items: center;
       gap: 5px;
       transition: all 0.15s;
+      flex-shrink: 0;
+      min-height: 30px;
     }
     .copy-btn:hover {
       background: rgba(157, 78, 221, 0.3);
@@ -280,19 +365,19 @@
 
     /* Product Preview Showcase */
     .preview-showcase {
-      margin: 40px auto 70px;
+      margin: 30px auto 60px;
       max-width: 900px;
       background: linear-gradient(180deg, rgba(30, 20, 58, 0.6) 0%, rgba(18, 14, 36, 0.8) 100%);
       border: 1px solid var(--border-glow);
-      border-radius: 18px;
-      padding: 8px;
+      border-radius: 16px;
+      padding: 6px;
       box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6), 0 0 40px rgba(157, 78, 221, 0.15);
     }
     .window-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 10px 16px;
+      padding: 10px 14px;
       border-bottom: 1px solid rgba(157, 78, 221, 0.15);
     }
     .window-dots {
@@ -300,28 +385,29 @@
       gap: 6px;
     }
     .window-dot {
-      width: 10px;
-      height: 10px;
+      width: 9px;
+      height: 9px;
       border-radius: 50%;
     }
     .window-dot.red { background: #ff5f56; }
     .window-dot.yellow { background: #ffbd2e; }
     .window-dot.green { background: #27c93f; }
     .window-title {
-      font-size: 12px;
+      font-size: 11.5px;
       color: var(--text-muted);
       font-weight: 500;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      padding: 0 8px;
     }
 
-    /* Interactive Mockup Inside */
+    /* Preview Grid */
     .preview-grid {
       display: grid;
-      grid-template-columns: 320px 1fr;
+      grid-template-columns: 310px 1fr;
       gap: 16px;
-      padding: 18px;
-    }
-    @media (max-width: 800px) {
-      .preview-grid { grid-template-columns: 1fr; }
+      padding: 16px;
     }
 
     /* Mock Sidebar Card */
@@ -430,8 +516,17 @@
       color: #fff;
       font-size: 10px;
       font-weight: 700;
+      flex-shrink: 0;
     }
-    .mock-email { font-size: 11.5px; font-weight: 600; color: #fff; flex: 1; }
+    .mock-email {
+      font-size: 11.5px;
+      font-weight: 600;
+      color: #fff;
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
     .mock-active-tag {
       font-size: 9px;
       color: var(--green);
@@ -440,11 +535,10 @@
       border: 1px solid rgba(0, 245, 212, 0.3);
       border-radius: 12px;
       padding: 1px 6px;
+      flex-shrink: 0;
     }
     .mock-models { padding: 8px 11px; }
-    .mock-model-row {
-      margin-bottom: 8px;
-    }
+    .mock-model-row { margin-bottom: 8px; }
     .mock-model-top {
       display: flex;
       justify-content: space-between;
@@ -470,18 +564,19 @@
       display: flex;
       flex-direction: column;
       justify-content: center;
-      padding: 12px 16px;
+      padding: 10px 14px;
     }
     .preview-info h3 {
-      font-size: 22px;
+      font-size: clamp(18px, 3vw, 22px);
       font-weight: 700;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
       color: #fff;
     }
     .preview-info p {
       color: var(--text-muted);
-      font-size: 14px;
-      margin-bottom: 20px;
+      font-size: clamp(13px, 2vw, 14px);
+      margin-bottom: 18px;
+      line-height: 1.55;
     }
     .preview-highlights {
       display: flex;
@@ -492,45 +587,46 @@
       display: flex;
       align-items: flex-start;
       gap: 10px;
-      font-size: 13.5px;
+      font-size: clamp(12.5px, 2vw, 13.5px);
       color: #e5def4;
     }
     .highlight-icon {
       color: var(--green);
       font-weight: 800;
+      flex-shrink: 0;
+      margin-top: 2px;
     }
 
     /* Features Grid */
     .section-title {
       text-align: center;
-      font-size: 34px;
+      font-size: clamp(24px, 5vw, 34px);
       font-weight: 800;
       letter-spacing: -0.02em;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
+      padding: 0 10px;
     }
     .section-subtitle {
       text-align: center;
       color: var(--text-muted);
-      font-size: 16px;
+      font-size: clamp(14px, 2.5vw, 16px);
       max-width: 600px;
-      margin: 0 auto 48px;
+      margin: 0 auto clamp(32px, 6vw, 48px);
+      padding: 0 10px;
     }
     .features-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 20px;
-      margin-bottom: 80px;
-    }
-    @media (max-width: 900px) {
-      .features-grid { grid-template-columns: 1fr; }
-      .hero-title { font-size: 38px; }
+      gap: 18px;
+      margin-bottom: clamp(48px, 8vw, 80px);
     }
     .feature-card {
       background: var(--surface-card);
       border: 1px solid var(--border);
       border-radius: 14px;
-      padding: 24px;
+      padding: clamp(18px, 4vw, 24px);
       backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
       transition: all 0.2s;
     }
     .feature-card:hover {
@@ -539,18 +635,18 @@
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
     }
     .feature-icon-box {
-      width: 44px;
-      height: 44px;
+      width: 42px;
+      height: 42px;
       border-radius: 10px;
       background: linear-gradient(135deg, rgba(255, 107, 53, 0.15) 0%, rgba(157, 78, 221, 0.2) 100%);
       border: 1px solid var(--border);
       display: grid;
       place-items: center;
-      font-size: 20px;
-      margin-bottom: 16px;
+      font-size: 19px;
+      margin-bottom: 14px;
     }
     .feature-card h4 {
-      font-size: 17px;
+      font-size: 16px;
       font-weight: 700;
       color: #fff;
       margin-bottom: 8px;
@@ -565,28 +661,25 @@
     .install-section {
       background: linear-gradient(180deg, rgba(18, 14, 36, 0.8) 0%, rgba(12, 9, 25, 0.95) 100%);
       border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 40px 36px;
-      margin-bottom: 80px;
+      border-radius: 18px;
+      padding: clamp(24px, 5vw, 40px) clamp(16px, 4vw, 36px);
+      margin-bottom: clamp(48px, 8vw, 80px);
       box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
     }
     .steps-row {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 24px;
-      margin-top: 32px;
-    }
-    @media (max-width: 800px) {
-      .steps-row { grid-template-columns: 1fr; }
+      gap: 18px;
+      margin-top: 24px;
     }
     .step-card {
       background: rgba(22, 17, 44, 0.6);
       border: 1px solid var(--border);
       border-radius: 12px;
-      padding: 20px;
+      padding: 18px;
     }
     .step-number {
-      font-size: 12px;
+      font-size: 11.5px;
       font-weight: 800;
       color: var(--orange);
       text-transform: uppercase;
@@ -594,7 +687,7 @@
       margin-bottom: 6px;
     }
     .step-title {
-      font-size: 16px;
+      font-size: 15.5px;
       font-weight: 700;
       color: #fff;
       margin-bottom: 8px;
@@ -602,6 +695,7 @@
     .step-desc {
       font-size: 13px;
       color: var(--text-muted);
+      line-height: 1.55;
     }
     kbd {
       background: #251c44;
@@ -616,7 +710,7 @@
     /* Footer */
     footer {
       border-top: 1px solid var(--border);
-      padding: 40px 0;
+      padding: clamp(28px, 6vw, 40px) 0;
       text-align: center;
       color: var(--text-muted);
       font-size: 13px;
@@ -631,8 +725,78 @@
     .footer-links {
       display: flex;
       justify-content: center;
-      gap: 20px;
+      gap: 16px;
       margin-top: 12px;
+      flex-wrap: wrap;
+    }
+
+    /* =========================================================
+       MEDIA QUERIES (TABLETS, PHONES, SMALL SCREENS)
+       ========================================================= */
+
+    /* Tablets (max-width: 960px) */
+    @media (max-width: 960px) {
+      .features-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .steps-row {
+        grid-template-columns: repeat(3, 1fr);
+      }
+      .preview-grid {
+        grid-template-columns: 290px 1fr;
+      }
+    }
+
+    /* Small Tablets & Large Phones (max-width: 768px) */
+    @media (max-width: 768px) {
+      .nav-links {
+        display: none; /* Replaced by mobile toggle button */
+      }
+      .menu-toggle {
+        display: inline-flex;
+      }
+      .preview-grid {
+        grid-template-columns: 1fr;
+      }
+      .steps-row {
+        grid-template-columns: 1fr;
+        gap: 14px;
+      }
+      .features-grid {
+        grid-template-columns: 1fr;
+        gap: 14px;
+      }
+      .cta-row {
+        flex-direction: column;
+        width: 100%;
+      }
+      .btn-primary, .btn-secondary {
+        width: 100%;
+      }
+      .command-box {
+        width: 100%;
+      }
+      .install-section {
+        padding: 24px 18px;
+      }
+    }
+
+    /* Ultra-small phones (max-width: 400px) */
+    @media (max-width: 400px) {
+      .container {
+        padding-left: 14px;
+        padding-right: 14px;
+      }
+      .brand-name {
+        font-size: 17px;
+      }
+      .command-box {
+        font-size: 11px;
+        padding: 6px 10px;
+      }
+      .mock-sidebar {
+        padding: 10px;
+      }
     }
   </style>
 </head>
@@ -645,6 +809,8 @@
         <img class="brand-logo-img" src="gravix-logo.png" alt="Gravix Logo">
         <span class="brand-name">Gravix</span>
       </a>
+
+      <!-- Desktop Nav -->
       <nav class="nav-links">
         <a href="#features">Features</a>
         <a href="#preview">Preview</a>
@@ -658,7 +824,31 @@
           <span>Download VSIX</span>
         </a>
       </nav>
+
+      <!-- Mobile Hamburger Button -->
+      <button class="menu-toggle" id="menu-toggle" aria-label="Toggle navigation menu" aria-expanded="false">
+        <svg viewBox="0 0 24 24">
+          <line x1="3" y1="6" x2="21" y2="6"/>
+          <line x1="3" y1="12" x2="21" y2="12"/>
+          <line x1="3" y1="18" x2="21" y2="18"/>
+        </svg>
+      </button>
     </div>
+
+    <!-- Mobile Navigation Drawer -->
+    <nav class="mobile-menu" id="mobile-menu">
+      <a href="#features" class="mobile-nav-link">Features</a>
+      <a href="#preview" class="mobile-nav-link">Interactive Preview</a>
+      <a href="#install" class="mobile-nav-link">How to Install</a>
+      <a href="https://github.com/aryamanm77/gravix" target="_blank" rel="noopener">GitHub Repository</a>
+      <a href="gravix-0.6.1.vsix" download class="mobile-download-btn">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor">
+          <path d="M8 12l-4-4h2.5V2h3v6H12z"/>
+          <path d="M14 14H2v-2h12v2z"/>
+        </svg>
+        <span>Download Gravix (.VSIX)</span>
+      </a>
+    </nav>
   </header>
 
   <!-- Hero Section -->
@@ -710,7 +900,7 @@
             <span class="window-dot green"></span>
           </div>
           <span class="window-title">Antigravity IDE — Gravix Sidebar</span>
-          <div style="width: 40px;"></div>
+          <div style="width: 30px;"></div>
         </div>
 
         <div class="preview-grid">
@@ -848,7 +1038,7 @@
             <div class="step-number">Step 01</div>
             <div class="step-title">Download VSIX</div>
             <div class="step-desc">
-              Download the <a href="gravix-0.6.1.vsix" download style="color: #ffaa00; font-weight: 600;">gravix-0.6.1.vsix</a> file to your computer.
+              Download the <a href="gravix-0.6.1.vsix" download style="color: #ffaa00; font-weight: 600;">gravix-0.6.1.vsix</a> file directly to your device.
             </div>
           </div>
 
@@ -899,6 +1089,22 @@
           span.textContent = orig;
           copyBtn.style.color = '';
         }, 2000);
+      });
+    });
+
+    // Mobile Hamburger Menu Toggle
+    const menuToggle = document.getElementById('menu-toggle');
+    const mobileMenu = document.getElementById('mobile-menu');
+    menuToggle.addEventListener('click', () => {
+      const isOpen = mobileMenu.classList.toggle('open');
+      menuToggle.setAttribute('aria-expanded', isOpen);
+    });
+
+    // Close mobile menu on clicking any link
+    document.querySelectorAll('.mobile-nav-link, .mobile-download-btn').forEach(link => {
+      link.addEventListener('click', () => {
+        mobileMenu.classList.remove('open');
+        menuToggle.setAttribute('aria-expanded', 'false');
       });
     });
   </script>
