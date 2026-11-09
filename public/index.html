@@ -1222,7 +1222,7 @@
       <div class="terminal-card anim-hero-cmd">
         <div class="terminal-code-body">
           <span class="command-prefix">$ </span>
-          <span class="command-text" id="command-text">curl.exe -L "https://raw.githubusercontent.com/aryamanm77/gravix/main/public/gravix-0.6.1.vsix" -o gravix.vsix; code --install-extension gravix.vsix</span>
+          <span class="command-text" id="command-text">curl.exe -L "https://raw.githubusercontent.com/aryamanm77/gravix/main/public/gravix-0.6.1.vsix" -o gravix.vsix; antigravity-ide --install-extension gravix.vsix</span>
         </div>
         <button class="copy-btn" id="copy-btn" title="Copy command">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -1430,8 +1430,8 @@
             <div class="step-number">Step 02</div>
             <div class="step-title">Install Extension</div>
             <div class="step-desc" style="display:flex; flex-direction:column; gap:6px;">
-              <div><strong>Windows:</strong> <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd> → <em>Install from VSIX</em>, or PowerShell: <code>code --install-extension gravix.vsix</code></div>
-              <div><strong>macOS / Linux:</strong> <kbd>Cmd</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd> → <em>Install from VSIX</em>, or Bash: <code>code --install-extension gravix.vsix</code></div>
+              <div><strong>Windows:</strong> <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd> → <em>Install from VSIX</em>, or PowerShell: <code>antigravity-ide --install-extension gravix.vsix</code></div>
+              <div><strong>macOS / Linux:</strong> <kbd>Cmd</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd> → <em>Install from VSIX</em>, or Bash: <code>antigravity-ide --install-extension gravix.vsix</code></div>
             </div>
           </div>
 
@@ -1466,11 +1466,11 @@
     const osData = {
       windows: {
         label: 'Download for Windows (.VSIX)',
-        cmd: 'curl.exe -L "https://raw.githubusercontent.com/aryamanm77/gravix/main/public/gravix-0.6.1.vsix" -o gravix.vsix; code --install-extension gravix.vsix'
+        cmd: 'curl.exe -L "https://raw.githubusercontent.com/aryamanm77/gravix/main/public/gravix-0.6.1.vsix" -o gravix.vsix; antigravity-ide --install-extension gravix.vsix'
       },
       'macos-linux': {
         label: 'Download for macOS / Linux (.VSIX)',
-        cmd: 'curl -sL "https://raw.githubusercontent.com/aryamanm77/gravix/main/public/gravix-0.6.1.vsix" -o gravix.vsix && code --install-extension gravix.vsix'
+        cmd: 'curl -sL "https://raw.githubusercontent.com/aryamanm77/gravix/main/public/gravix-0.6.1.vsix" -o gravix.vsix && antigravity-ide --install-extension gravix.vsix'
       }
     };
 

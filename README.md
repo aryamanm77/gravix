@@ -38,12 +38,17 @@ Choose your platform below to download and install Gravix in one command:
 
 ### 🪟 Windows (PowerShell)
 ```powershell
-curl.exe -L "https://raw.githubusercontent.com/aryamanm77/gravix/main/public/gravix-0.6.1.vsix" -o gravix.vsix; code --install-extension gravix.vsix
+curl.exe -L "https://raw.githubusercontent.com/aryamanm77/gravix/main/public/gravix-0.6.1.vsix" -o gravix.vsix; antigravity-ide --install-extension gravix.vsix
+```
+
+### 🪟 Windows (Command Prompt / CMD)
+```cmd
+curl -L "https://raw.githubusercontent.com/aryamanm77/gravix/main/public/gravix-0.6.1.vsix" -o gravix.vsix && antigravity-ide --install-extension gravix.vsix
 ```
 
 ### 🍎 🐧 macOS & Linux (Bash / Zsh)
 ```bash
-curl -sL "https://raw.githubusercontent.com/aryamanm77/gravix/main/public/gravix-0.6.1.vsix" -o gravix.vsix && code --install-extension gravix.vsix
+curl -sL "https://raw.githubusercontent.com/aryamanm77/gravix/main/public/gravix-0.6.1.vsix" -o gravix.vsix && antigravity-ide --install-extension gravix.vsix
 ```
 
 > [!TIP]
@@ -92,7 +97,7 @@ curl -sL "https://raw.githubusercontent.com/aryamanm77/gravix/main/public/gravix
    Download [`gravix-0.6.1.vsix`](https://raw.githubusercontent.com/aryamanm77/gravix/main/public/gravix-0.6.1.vsix) directly or run the 1-line curl command above.
 
 2. **Install into Antigravity IDE**  
-   Run `code --install-extension gravix.vsix` in your terminal or use **Extensions: Install from VSIX** from the Command Palette (<kbd>Ctrl</kbd>/<kbd>Cmd</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd>).
+   Run `antigravity-ide --install-extension gravix.vsix` in your terminal or use **Extensions: Install from VSIX** from the Command Palette (<kbd>Ctrl</kbd>/<kbd>Cmd</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd>).
 
 3. **Reload & Enjoy**  
    Reload the IDE window. Click the **Gravix** icon in your Activity Bar to manage accounts and monitor quotas.
